@@ -84,7 +84,10 @@ def build_document():
                     cell.width = Cm(width)
             continue
         else:
-            add_inline(doc.add_paragraph(), line)
+            paragraph = doc.add_paragraph()
+            add_inline(paragraph, line)
+            if re.match(r'^\d+\. \[', line):
+                paragraph.paragraph_format.space_after = Pt(3)
         index += 1
     doc.core_properties.title = 'Обоснование стека приложения Запомни'
     doc.core_properties.subject = 'Практика 3'

@@ -1,43 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1260" viewBox="0 0 1800 1260">
 <rect width="1800" height="1260" fill="white"/>
 <rect x="340" y="55" width="1120" height="1160" fill="none" stroke="#303030" stroke-width="3"/>
-<text x="900" y="114" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Система Запомни</text>
+<text x="900" y="114" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Система Запомни</text>
 <circle cx="140" cy="500" r="28" fill="white" stroke="#303030" stroke-width="3"/>
 <polyline points="140,528 140,625" fill="none" stroke="#303030" stroke-width="3"/>
 <polyline points="80,570 200,570" fill="none" stroke="#303030" stroke-width="3"/>
 <polyline points="90,700 140,625 190,700" fill="none" stroke="#303030" stroke-width="3"/>
-<text x="140" y="767" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Учащийся</text>
+<text x="140" y="767" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Учащийся</text>
 <circle cx="1640" cy="900" r="28" fill="white" stroke="#303030" stroke-width="3"/>
 <polyline points="1640,928 1640,1025" fill="none" stroke="#303030" stroke-width="3"/>
 <polyline points="1580,970 1700,970" fill="none" stroke="#303030" stroke-width="3"/>
 <polyline points="1590,1100 1640,1025 1690,1100" fill="none" stroke="#303030" stroke-width="3"/>
-<text x="1640" y="1146" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Редактор</text>
-<text x="1640" y="1188" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">каталога</text>
+<text x="1640" y="1146" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Редактор</text>
+<text x="1640" y="1188" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">каталога</text>
 <polyline points="200,570 570,200" fill="none" stroke="#303030" stroke-width="3"/>
-<ellipse cx="900" cy="200" rx="330" ry="59" fill="#F6F8FA" stroke="#303030" stroke-width="3"/>
-<text x="900" y="191" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Просматривать и искать</text>
-<text x="900" y="233" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">общий каталог</text>
+<ellipse cx="900" cy="200" rx="330" ry="59" fill="white" stroke="#303030" stroke-width="3"/>
+<text x="900" y="191" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Просматривать и искать</text>
+<text x="900" y="233" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">общий каталог</text>
 <polyline points="200,570 570,345" fill="none" stroke="#303030" stroke-width="3"/>
-<ellipse cx="900" cy="345" rx="330" ry="59" fill="#F6F8FA" stroke="#303030" stroke-width="3"/>
-<text x="900" y="357" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Скачивать набор</text>
+<ellipse cx="900" cy="345" rx="330" ry="59" fill="white" stroke="#303030" stroke-width="3"/>
+<text x="900" y="357" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Скачивать набор</text>
 <polyline points="200,570 570,490" fill="none" stroke="#303030" stroke-width="3"/>
-<ellipse cx="900" cy="490" rx="330" ry="59" fill="#F6F8FA" stroke="#303030" stroke-width="3"/>
-<text x="900" y="481" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Управлять собственными</text>
-<text x="900" y="523" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">наборами и карточками</text>
+<ellipse cx="900" cy="490" rx="330" ry="59" fill="white" stroke="#303030" stroke-width="3"/>
+<text x="900" y="481" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Управлять собственными</text>
+<text x="900" y="523" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">наборами и карточками</text>
 <polyline points="200,570 570,635" fill="none" stroke="#303030" stroke-width="3"/>
-<ellipse cx="900" cy="635" rx="330" ry="59" fill="#F6F8FA" stroke="#303030" stroke-width="3"/>
-<text x="900" y="626" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Заниматься по карточкам</text>
-<text x="900" y="668" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">с жестами или кнопками</text>
+<ellipse cx="900" cy="635" rx="330" ry="59" fill="white" stroke="#303030" stroke-width="3"/>
+<text x="900" y="626" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Заниматься по карточкам</text>
+<text x="900" y="668" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">с жестами или кнопками</text>
 <polyline points="200,570 570,780" fill="none" stroke="#303030" stroke-width="3"/>
-<ellipse cx="900" cy="780" rx="330" ry="59" fill="#F6F8FA" stroke="#303030" stroke-width="3"/>
-<text x="900" y="771" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Просматривать результаты</text>
-<text x="900" y="813" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">и статистику</text>
+<ellipse cx="900" cy="780" rx="330" ry="59" fill="white" stroke="#303030" stroke-width="3"/>
+<text x="900" y="771" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Просматривать результаты</text>
+<text x="900" y="813" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">и статистику</text>
 <polyline points="200,570 570,925" fill="none" stroke="#303030" stroke-width="3"/>
-<ellipse cx="900" cy="925" rx="330" ry="59" fill="#F6F8FA" stroke="#303030" stroke-width="3"/>
-<text x="900" y="916" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Настраивать тему</text>
-<text x="900" y="958" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">жесты и напоминания</text>
+<ellipse cx="900" cy="925" rx="330" ry="59" fill="white" stroke="#303030" stroke-width="3"/>
+<text x="900" y="916" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Настраивать тему</text>
+<text x="900" y="958" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">жесты и напоминания</text>
 <polyline points="1580,970 1230,1070" fill="none" stroke="#303030" stroke-width="3"/>
-<ellipse cx="900" cy="1070" rx="330" ry="59" fill="#F6F8FA" stroke="#303030" stroke-width="3"/>
-<text x="900" y="1061" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">Изменять общий каталог</text>
-<text x="900" y="1103" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">при доступе редактора</text>
+<ellipse cx="900" cy="1070" rx="330" ry="59" fill="white" stroke="#303030" stroke-width="3"/>
+<text x="900" y="1061" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">Изменять общий каталог</text>
+<text x="900" y="1103" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">при доступе редактора</text>
 </svg>

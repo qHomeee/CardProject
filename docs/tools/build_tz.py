@@ -103,9 +103,9 @@ def add_table(doc, rows):
     table = doc.add_table(rows=0, cols=len(rows[0]))
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
-    widths = [2.8, 7.4, 6.8] if len(rows[0]) == 3 else [4.6, 12.4]
+    widths = [3.6, 6.9, 6.5] if len(rows[0]) == 3 else [4.6, 12.4]
     if len(rows[0]) == 4:
-        widths = [3.0, 4.6, 4.7, 4.7]
+        widths = [3.9, 4.4, 4.35, 4.35]
     if rows[0][0] == 'ID':
         widths = [1.4, 11.9, 3.7]
     if rows[0][0] == 'Оценка':

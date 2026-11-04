@@ -11,11 +11,13 @@ from html import escape
 from docx import Document
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.section import WD_ORIENT, WD_SECTION_START
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.shared import Cm, Pt, RGBColor
 from PIL import Image, ImageDraw, ImageFont
+from document_style import apply_document_style, FONT_NAME
 
 DOCS = Path(__file__).resolve().parents[1]
 
@@ -26,7 +28,7 @@ def build_diagram():
     target.mkdir(exist_ok=True)
     canvas = Image.new('RGB', (1800, 1260), 'white')
     draw = ImageDraw.Draw(canvas)
-    font = ImageFont.truetype('C:/Windows/Fonts/arial.ttf', 36)
+    font = ImageFont.truetype('C:/Windows/Fonts/times.ttf', 37)
     svg = ['<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1260" viewBox="0 0 1800 1260">',
            '<rect width="1800" height="1260" fill="white"/>']
 
@@ -40,7 +42,7 @@ def build_diagram():
         lines = text.split('\n')
         for index, part in enumerate(lines):
             baseline = y - (len(lines) - 1) * 21 + index * 42 + 12
-            svg.append(f'<text x="{x}" y="{baseline}" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="black">{escape(part)}</text>')
+            svg.append(f'<text x="{x}" y="{baseline}" font-family="Times New Roman, serif" font-size="37" text-anchor="middle" fill="black">{escape(part)}</text>')
 
     def actor(x, y, text):
         draw.ellipse((x - 28, y - 28, x + 28, y + 28), outline='#303030', width=3)
@@ -70,8 +72,8 @@ def build_diagram():
             line([(200, 570), (570, y)])
         else:
             line([(1580, 970), (1230, y)])
-        draw.ellipse((570, y - 59, 1230, y + 59), fill='#F6F8FA', outline='#303030', width=3)
-        svg.append(f'<ellipse cx="900" cy="{y}" rx="330" ry="59" fill="#F6F8FA" stroke="#303030" stroke-width="3"/>')
+        draw.ellipse((570, y - 59, 1230, y + 59), fill='white', outline='#303030', width=3)
+        svg.append(f'<ellipse cx="900" cy="{y}" rx="330" ry="59" fill="white" stroke="#303030" stroke-width="3"/>')
         label((900, y), text)
     svg.append('</svg>')
     (target / '02-use-cases.svg').write_text('\n'.join(svg), encoding='utf-8')
@@ -87,7 +89,7 @@ def add_inline(paragraph, text):
             link.set(qn('r:id'), paragraph.part.relate_to(match[2], RT.HYPERLINK, is_external=True))
             run = OxmlElement('w:r')
             props = OxmlElement('w:rPr')
-            color = OxmlElement('w:color'); color.set(qn('w:val'), '155A90'); props.append(color)
+            color = OxmlElement('w:color'); color.set(qn('w:val'), '000000'); props.append(color)
             run.append(props)
             value = OxmlElement('w:t'); value.text = match[1]; run.append(value)
             link.append(run); paragraph._p.append(link)
@@ -102,6 +104,8 @@ def add_table(doc, rows):
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
     widths = [2.8, 7.4, 6.8] if len(rows[0]) == 3 else [4.6, 12.4]
+    if len(rows[0]) == 4:
+        widths = [3.0, 4.6, 4.7, 4.7]
     if rows[0][0] == 'ID':
         widths = [1.4, 11.9, 3.7]
     if rows[0][0] == 'Оценка':
@@ -111,7 +115,7 @@ def add_table(doc, rows):
     borders = OxmlElement('w:tblBorders')
     for side in ['top', 'left', 'bottom', 'right', 'insideH', 'insideV']:
         edge = OxmlElement('w:' + side)
-        for key, value in [('val', 'single'), ('sz', '4'), ('color', 'D9D9D9')]:
+        for key, value in [('val', 'single'), ('sz', '6'), ('color', '000000')]:
             edge.set(qn('w:' + key), value)
         borders.append(edge)
     table._tbl.tblPr.append(borders)
@@ -126,7 +130,7 @@ def add_table(doc, rows):
             cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
             props = cell._tc.get_or_add_tcPr()
             shade = OxmlElement('w:shd')
-            shade.set(qn('w:fill'), 'E5EDF5' if index == 0 else ('F6F8FA' if index % 2 == 0 else 'FFFFFF'))
+            shade.set(qn('w:fill'), 'FFFFFF')
             props.append(shade)
             margins = OxmlElement('w:tcMar')
             for side in ['top', 'left', 'bottom', 'right']:
@@ -135,10 +139,9 @@ def add_table(doc, rows):
             props.append(margins)
             paragraph = cell.paragraphs[0]
             paragraph.paragraph_format.space_after = Pt(2)
-            paragraph.paragraph_format.line_spacing = 1.0
             add_inline(paragraph, value)
             for run in paragraph.runs:
-                run.font.size = Pt(9.5)
+                run.font.size = Pt(14)
                 if index == 0:
                     run.bold = True
     doc.add_paragraph().paragraph_format.space_after = Pt(1)
@@ -153,15 +156,14 @@ def build_document():
     section.left_margin = section.right_margin = Cm(2)
     for name in ['Normal', 'Title', 'Subtitle', 'Heading 1', 'Heading 2']:
         style = doc.styles[name]
-        style.font.name = 'Arial'
+        style.font.name = FONT_NAME
         style.font.color.rgb = RGBColor(0, 0, 0)
         style.paragraph_format.space_after = Pt(6)
     for style in doc.styles:
         for border in list(style.element.iter(qn('w:pBdr'))):
             border.getparent().remove(border)
-    doc.styles['Normal'].font.size = Pt(10.5)
-    doc.styles['Normal'].paragraph_format.line_spacing = 1.04
-    doc.styles['Title'].font.size = Pt(21)
+    doc.styles['Normal'].font.size = Pt(14)
+    doc.styles['Title'].font.size = Pt(14)
     doc.styles['Title'].font.underline = False
     doc.styles['Heading 1'].font.size = Pt(14)
     doc.styles['Heading 1'].paragraph_format.space_before = Pt(9)
@@ -169,7 +171,7 @@ def build_document():
     footer = section.footer.paragraphs[0]
     footer.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     run = footer.add_run('Запомни    Техническое задание    ')
-    run.font.size = Pt(8)
+    run.font.size = Pt(14)
     field = OxmlElement('w:fldSimple'); field.set(qn('w:instr'), 'PAGE'); footer._p.append(field)
     lines = (DOCS / '02-tz.md').read_text(encoding='utf-8').splitlines()
     index = 0
@@ -178,7 +180,7 @@ def build_document():
         if not line:
             index += 1; continue
         if line == '<!-- pagebreak -->':
-            doc.add_page_break()
+            pass
         elif line.startswith('# '):
             doc.add_paragraph(line[2:], 'Title')
         elif line.startswith('## '):
@@ -194,10 +196,21 @@ def build_document():
             continue
         elif line.startswith('!['):
             match = re.fullmatch(r'!\[([^\]]+)\]\(([^)]+)\)', line)
+            diagram_section = doc.add_section(WD_SECTION_START.NEW_PAGE)
+            diagram_section.orientation = WD_ORIENT.LANDSCAPE
+            diagram_section.page_width, diagram_section.page_height = Cm(29.7), Cm(21)
+            diagram_section.top_margin = diagram_section.bottom_margin = Cm(1.4)
+            diagram_section.left_margin = diagram_section.right_margin = Cm(2)
             paragraph = doc.add_paragraph()
             paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            shape = paragraph.add_run().add_picture(str(DOCS / match[2]), width=Cm(16.7))
+            # При ширине 24 см подписи 37 px на исходнике 1800 px дают 14 pt.
+            shape = paragraph.add_run().add_picture(str(DOCS / match[2]), width=Cm(24))
             shape._inline.docPr.set('descr', match[1])
+            content_section = doc.add_section(WD_SECTION_START.NEW_PAGE)
+            content_section.orientation = WD_ORIENT.PORTRAIT
+            content_section.page_width, content_section.page_height = Cm(21), Cm(29.7)
+            content_section.top_margin = content_section.bottom_margin = Cm(1.6)
+            content_section.left_margin = content_section.right_margin = Cm(2)
         else:
             add_inline(doc.add_paragraph(), line)
         index += 1
@@ -206,6 +219,7 @@ def build_document():
     doc.core_properties.author = ''
     doc.core_properties.last_modified_by = ''
     output = DOCS / '02-tz.docx'
+    apply_document_style(doc)
     doc.save(output)
     check = Document(output)
     assert len(check.tables) == 4

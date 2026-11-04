@@ -15,6 +15,7 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.shared import Cm, Pt, RGBColor
 
 from build_tz import add_inline, add_table
+from document_style import apply_document_style, FONT_NAME
 
 DOCS = Path(__file__).resolve().parents[1]
 WIDTHS = {
@@ -35,22 +36,21 @@ def build_document():
     section.left_margin = section.right_margin = Cm(2)
     for name in ['Normal', 'Title', 'Subtitle', 'Heading 1', 'Heading 2']:
         style = doc.styles[name]
-        style.font.name = 'Arial'
+        style.font.name = FONT_NAME
         style.font.color.rgb = RGBColor(0, 0, 0)
         style.paragraph_format.space_after = Pt(6)
     for style in doc.styles:
         for border in list(style.element.iter(qn('w:pBdr'))):
             border.getparent().remove(border)
-    doc.styles['Normal'].font.size = Pt(10.5)
-    doc.styles['Normal'].paragraph_format.line_spacing = 1.04
-    doc.styles['Title'].font.size = Pt(21)
+    doc.styles['Normal'].font.size = Pt(14)
+    doc.styles['Title'].font.size = Pt(14)
     doc.styles['Title'].font.underline = False
     doc.styles['Heading 1'].font.size = Pt(14)
     doc.styles['Heading 1'].paragraph_format.space_before = Pt(9)
     doc.styles['Heading 1'].paragraph_format.keep_with_next = True
     footer = section.footer.paragraphs[0]
     footer.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    footer.add_run('Запомни    Обоснование стека    ').font.size = Pt(8)
+    footer.add_run('Запомни    Обоснование стека    ').font.size = Pt(14)
     field = OxmlElement('w:fldSimple')
     field.set(qn('w:instr'), 'PAGE')
     footer._p.append(field)
@@ -62,7 +62,7 @@ def build_document():
             index += 1
             continue
         if line == '<!-- pagebreak -->':
-            doc.add_page_break()
+            pass
         elif line.startswith('# '):
             doc.add_paragraph(line[2:], 'Title')
         elif line.startswith('## '):
@@ -91,6 +91,7 @@ def build_document():
     doc.core_properties.author = ''
     doc.core_properties.last_modified_by = ''
     output = DOCS / '03-stack.docx'
+    apply_document_style(doc)
     doc.save(output)
     check = Document(output)
     assert [len(table.rows) for table in check.tables] == [10, 11, 9, 11, 4]

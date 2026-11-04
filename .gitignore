@@ -1,0 +1,18 @@
+# Локальные настройки и секреты
+**/local.properties
+**/.env
+**/.env.*
+!**/.env.example
+**/*.jks
+**/*.keystore
+
+# Сборка и файлы IDE
+**/.gradle/
+**/.kotlin/
+**/build/
+**/.idea/
+*.iml
+**/__pycache__/
+**/.venv/
+**/.pytest_cache/
+.tmp/

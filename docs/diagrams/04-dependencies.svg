@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="658" viewBox="0 0 1440 658" role="img">
+<title>Зависимости слоёв приложения Запомни</title>
+<desc>Presentation и data зависят от domain. DI связывает реализации трёх слоёв.</desc>
+<rect width="100%" height="100%" fill="white"/>
+<line x1="542" y1="136" x2="435.4" y2="182.4" stroke="black" stroke-width="4" stroke-dasharray="12 7"/>
+<polygon points="418.0,190.0 431.8,174.2 439.0,190.7" fill="black"/>
+<line x1="898" y1="136" x2="1004.6" y2="182.4" stroke="black" stroke-width="4" stroke-dasharray="12 7"/>
+<polygon points="1022.0,190.0 1001.0,190.7 1008.2,174.2" fill="black"/>
+<line x1="720" y1="136" x2="720.0" y2="439.0" stroke="black" stroke-width="4" stroke-dasharray="12 7"/>
+<polygon points="720.0,458.0 711.0,439.0 729.0,439.0" fill="black"/>
+<line x1="395" y1="348" x2="516.2" y2="446.1" stroke="black" stroke-width="4"/>
+<polygon points="531.0,458.0 510.6,453.0 521.9,439.1" fill="black"/>
+<line x1="1045" y1="348" x2="923.8" y2="446.1" stroke="black" stroke-width="4"/>
+<polygon points="909.0,458.0 918.1,439.1 929.4,453.0" fill="black"/>
+<g font-family="Times New Roman, serif" font-size="42" text-anchor="middle" fill="black">
+<rect x="439" y="12" width="562" height="124" fill="white" stroke="black" stroke-width="4"/>
+<text x="720" y="64" font-weight="bold">DI и Koin</text>
+<text x="720" y="110">Связывание классов</text>
+<rect x="24" y="190" width="640" height="158" fill="white" stroke="black" stroke-width="4"/>
+<text x="344" y="236" font-weight="bold">presentation</text>
+<text x="344" y="282">Compose и ViewModel</text>
+<text x="344" y="328">UiState и навигация</text>
+<rect x="776" y="190" width="640" height="158" fill="white" stroke="black" stroke-width="4"/>
+<text x="1096" y="236" font-weight="bold">data</text>
+<text x="1096" y="282">Room, DataStore и Ktor</text>
+<text x="1096" y="328">Датчики и напоминания</text>
+<rect x="321" y="458" width="798" height="188" fill="white" stroke="black" stroke-width="4"/>
+<text x="720" y="519" font-weight="bold">:domain на Kotlin/JVM</text>
+<text x="720" y="565">Модели и интерфейсы</text>
+<text x="720" y="611">Use cases и правила повторения</text>
+</g>
+</svg>

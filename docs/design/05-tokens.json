@@ -1,0 +1,141 @@
+{
+  "schema": 1,
+  "themeOrder": [
+    "light",
+    "dark"
+  ],
+  "fontFamily": "Roboto",
+  "colors": {
+    "background": [
+      "#F8F7FC",
+      "#14131C"
+    ],
+    "surface": [
+      "#FFFFFF",
+      "#1E1C2A"
+    ],
+    "surfaceRaised": [
+      "#F1EEF9",
+      "#292636"
+    ],
+    "text": [
+      "#211D32",
+      "#F3EFFA"
+    ],
+    "textMuted": [
+      "#625A75",
+      "#BFB9CF"
+    ],
+    "border": [
+      "#DFD9EB",
+      "#423B55"
+    ],
+    "outline": [
+      "#777185",
+      "#9188A6"
+    ],
+    "primary": [
+      "#5142A2",
+      "#C8BFFF"
+    ],
+    "onPrimary": [
+      "#FFFFFF",
+      "#241755"
+    ],
+    "primarySoft": [
+      "#EBE6FF",
+      "#382C63"
+    ],
+    "onPrimarySoft": [
+      "#3D3085",
+      "#E8E1FF"
+    ],
+    "success": [
+      "#12593E",
+      "#A2E8C5"
+    ],
+    "successSoft": [
+      "#E3F6EB",
+      "#18392E"
+    ],
+    "danger": [
+      "#A42A46",
+      "#FFB1BF"
+    ],
+    "dangerSoft": [
+      "#FDE8ED",
+      "#432435"
+    ],
+    "warning": [
+      "#654600",
+      "#FFD88A"
+    ],
+    "warningSoft": [
+      "#FFF0C7",
+      "#372B14"
+    ],
+    "disabled": [
+      "#EAE6F1",
+      "#302C40"
+    ],
+    "onDisabled": [
+      "#655D76",
+      "#B5ADC6"
+    ]
+  },
+  "typography": {
+    "display": {
+      "style": "Bold",
+      "size": 32,
+      "lineHeight": 40,
+      "tracking": -0.5
+    },
+    "title": {
+      "style": "Bold",
+      "size": 24,
+      "lineHeight": 32,
+      "tracking": 0
+    },
+    "heading": {
+      "style": "Medium",
+      "size": 20,
+      "lineHeight": 28,
+      "tracking": 0
+    },
+    "body": {
+      "style": "Regular",
+      "size": 16,
+      "lineHeight": 24,
+      "tracking": 0.25
+    },
+    "label": {
+      "style": "Medium",
+      "size": 14,
+      "lineHeight": 20,
+      "tracking": 0.1
+    },
+    "caption": {
+      "style": "Regular",
+      "size": 12,
+      "lineHeight": 16,
+      "tracking": 0.2
+    }
+  },
+  "spacing": {
+    "space4": 4,
+    "space8": 8,
+    "space12": 12,
+    "space16": 16,
+    "space24": 24,
+    "space32": 32,
+    "space48": 48
+  },
+  "radius": {
+    "small": 8,
+    "medium": 12,
+    "large": 16,
+    "card": 24,
+    "pill": 999
+  },
+  "touchTarget": 48
+}

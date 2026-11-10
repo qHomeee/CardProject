@@ -19,11 +19,11 @@ WIDTHS = {
 }
 
 
-def insert_table(doc, rows):
+def insert_table(doc, rows, widths_by_header):
     """Переносит таблицу и задаёт ширину под её содержимое."""
     add_table(doc, rows)
     table = doc.tables[-1]
-    widths = WIDTHS[rows[0][0]]
+    widths = widths_by_header[rows[0][0]]
     for column, width in zip(table.columns, widths, strict=True):
         column.width = Cm(width)
     for row in table.rows:
@@ -31,7 +31,9 @@ def insert_table(doc, rows):
             cell.width = Cm(width)
 
 
-def build_document():
+def build_document(stem='05-design-system', footer_title='Дизайн-система',
+                   title='Дизайн-система приложения Запомни', subject='Практика 5',
+                   widths=WIDTHS):
     """Переносит текст и ссылки в DOCX с оформлением проекта."""
     doc = Document()
     section = doc.sections[0]
@@ -46,13 +48,13 @@ def build_document():
     doc.styles['Title'].font.underline = False
     footer = section.footer.paragraphs[0]
     footer.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    footer.add_run('Запомни    Дизайн-система    ')
+    footer.add_run(f'Запомни    {footer_title}    ')
     page_number = OxmlElement('w:fldSimple')
     page_number.set(qn('w:instr'), 'PAGE')
     footer._p.append(page_number)
 
     rows = []
-    lines = (DOCS / '05-design-system.md').read_text(encoding='utf-8').splitlines()
+    lines = (DOCS / f'{stem}.md').read_text(encoding='utf-8').splitlines()
     for line in [*lines, '']:
         line = line.strip()
         if line.startswith('|'):
@@ -61,7 +63,7 @@ def build_document():
                 rows.append(values)
             continue
         if rows:
-            insert_table(doc, rows)
+            insert_table(doc, rows, widths)
             rows = []
         if line.startswith('# '):
             doc.add_paragraph(line[2:], 'Title')
@@ -70,12 +72,12 @@ def build_document():
         elif line:
             add_inline(doc.add_paragraph(), line)
 
-    doc.core_properties.title = 'Дизайн-система приложения Запомни'
-    doc.core_properties.subject = 'Практика 5'
+    doc.core_properties.title = title
+    doc.core_properties.subject = subject
     doc.core_properties.author = ''
     doc.core_properties.last_modified_by = ''
     apply_document_style(doc)
-    output = DOCS / '05-design-system.docx'
+    output = DOCS / f'{stem}.docx'
     doc.save(output)
     print(f'Created {output}')
 

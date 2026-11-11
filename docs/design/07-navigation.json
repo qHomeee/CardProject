@@ -1,0 +1,246 @@
+{
+  "starts": {
+    "catalog": "Каталог",
+    "offline": "Офлайн",
+    "gestures": "Жесты недоступны"
+  },
+  "screens": {
+    "catalog": {
+      "view": [
+        "catalog",
+        "data"
+      ],
+      "title": "Каталог",
+      "links": {
+        "Столицы Европы": "remote",
+        "Мои наборы": "decks",
+        "Настройки": "settings"
+      }
+    },
+    "offline": {
+      "view": [
+        "catalog",
+        "offline"
+      ],
+      "title": "Каталог · офлайн",
+      "links": {
+        "Повторить": "catalog",
+        "Открыть мои наборы": "decks",
+        "Мои наборы": "decks",
+        "Настройки": "settings"
+      }
+    },
+    "remote": {
+      "view": [
+        "detail",
+        "remote"
+      ],
+      "title": "Набор из каталога",
+      "links": {
+        "Назад": "catalog",
+        "Скачать для офлайна": "saved"
+      }
+    },
+    "saved": {
+      "view": [
+        "detail",
+        "downloaded"
+      ],
+      "title": "Скачанный набор",
+      "links": {
+        "Назад": "decks",
+        "Начать занятие": "question"
+      }
+    },
+    "decks": {
+      "view": [
+        "decks",
+        "data"
+      ],
+      "title": "Мои наборы",
+      "links": {
+        "Каталог": "catalog",
+        "Настройки": "settings",
+        "Столицы Европы": "saved",
+        "Термины биологии": "owned",
+        "Статистика": "stats"
+      }
+    },
+    "owned": {
+      "view": [
+        "detail",
+        "owned"
+      ],
+      "title": "Свой набор",
+      "links": {
+        "Назад": "decks",
+        "Редактировать": "edit"
+      }
+    },
+    "edit": {
+      "view": [
+        "editor",
+        "edit"
+      ],
+      "title": "Редактор набора",
+      "links": {
+        "Назад": "owned",
+        "Что такое митоз?": "card",
+        "Сохранить набор": "owned"
+      }
+    },
+    "card": {
+      "view": [
+        "editor",
+        "card"
+      ],
+      "title": "Редактор карточки",
+      "links": {
+        "Назад": "edit",
+        "Сохранить карточку": "edit"
+      }
+    },
+    "question": {
+      "view": [
+        "study",
+        "question"
+      ],
+      "title": "Занятие · вопрос",
+      "links": {
+        "Назад": "exit",
+        "Показать ответ": "answer",
+        "Выйти из занятия": "exit"
+      }
+    },
+    "gestures": {
+      "view": [
+        "study",
+        "gestures"
+      ],
+      "title": "Занятие · жесты недоступны",
+      "links": {
+        "Назад": "exitGestures",
+        "Показать ответ": "answer",
+        "Выйти из занятия": "exitGestures"
+      }
+    },
+    "answer": {
+      "view": [
+        "study",
+        "answer"
+      ],
+      "title": "Занятие · ответ",
+      "links": {
+        "Назад": "exitAnswer",
+        "Вспомнил": "remembered",
+        "Нужно повторить": "repeat",
+        "Выйти из занятия": "exitAnswer"
+      }
+    },
+    "exit": {
+      "view": [
+        "study",
+        "exit"
+      ],
+      "title": "Выход из занятия · вопрос",
+      "links": {
+        "Выйти": "saved",
+        "Отмена": "question"
+      }
+    },
+    "exitGestures": {
+      "view": [
+        "study",
+        "gestures"
+      ],
+      "dialog": true,
+      "title": "Выход из занятия · жесты недоступны",
+      "links": {
+        "Выйти": "saved",
+        "Отмена": "gestures"
+      }
+    },
+    "exitAnswer": {
+      "view": [
+        "study",
+        "answer"
+      ],
+      "dialog": true,
+      "title": "Выход из занятия · ответ",
+      "links": {
+        "Выйти": "saved",
+        "Отмена": "answer"
+      }
+    },
+    "remembered": {
+      "view": [
+        "results",
+        "data"
+      ],
+      "title": "Результаты · вспомнил",
+      "links": {
+        "Назад": "decks",
+        "К моим наборам": "decks"
+      }
+    },
+    "repeat": {
+      "view": [
+        "results",
+        "data"
+      ],
+      "title": "Результаты · нужно повторить",
+      "links": {
+        "Назад": "decks",
+        "К моим наборам": "decks"
+      }
+    },
+    "stats": {
+      "view": [
+        "results",
+        "data"
+      ],
+      "title": "История занятий",
+      "links": {
+        "Назад": "decks",
+        "К моим наборам": "decks"
+      }
+    },
+    "settings": {
+      "view": [
+        "settings",
+        "data"
+      ],
+      "title": "Настройки",
+      "links": {
+        "Каталог": "catalog",
+        "Мои наборы": "decks",
+        "Напоминать о повторении": "time"
+      }
+    },
+    "time": {
+      "view": [
+        "settings",
+        "time"
+      ],
+      "title": "Выбор времени напоминания",
+      "links": {
+        "Готово": "reminder",
+        "Отмена": "settings"
+      }
+    },
+    "reminder": {
+      "view": [
+        "settings",
+        "time"
+      ],
+      "withoutDialog": true,
+      "title": "Настройки · напоминание включено",
+      "links": {
+        "Каталог": "catalog",
+        "Мои наборы": "decks",
+        "Время напоминания": "time",
+        "Напоминать о повторении": "settings"
+      }
+    }
+  }
+}

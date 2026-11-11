@@ -410,7 +410,7 @@ def settings(s, state):
     s.row('Жесты в занятии', 'Переворот и наклоны телефона', 'on')
     s.paragraph('Напоминания', 'heading', gap=8)
     s.row('Напоминать о повторении', 'При наличии карточек к повторению', 'off' if state in ('data', 'error') else 'on')
-    if state in ('time', 'permission', 'saving'):
+    if state in ('time', 'permission', 'saving', 'reminder'):
         s.row('Время напоминания', '20:00')
     if state == 'permission':
         s.note('error', 'Уведомления запрещены', 'Разрешите уведомления в настройках Android.')

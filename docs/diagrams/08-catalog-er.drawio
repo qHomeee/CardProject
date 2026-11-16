@@ -1,0 +1,34 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="catalog-er" name="Каталог">
+    <mxGraphModel grid="1" gridSize="10" guides="1" page="1" pageWidth="827" pageHeight="583">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="decks" value="decks" style="swimlane;startSize=36;horizontal=1;rounded=0;fillColor=#ffffff;swimlaneFillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontFamily=Times New Roman;fontSize=19;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="32" width="194" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="deck-fields" value="PK  id: uuid&#xa;title: varchar(100)&#xa;description: varchar(500)&#xa;title_search: text" style="text;html=0;align=left;verticalAlign=top;spacing=8;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="decks">
+          <mxGeometry y="37" width="194" height="117" as="geometry" />
+        </mxCell>
+        <mxCell id="cards" value="cards" style="swimlane;startSize=36;horizontal=1;rounded=0;fillColor=#ffffff;swimlaneFillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontFamily=Times New Roman;fontSize=19;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="314" y="32" width="194" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="card-fields" value="PK  id: uuid&#xa;FK  deck_id: uuid&#xa;question: varchar(1000)&#xa;answer: varchar(1000)" style="text;html=0;align=left;verticalAlign=top;spacing=8;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="cards">
+          <mxGeometry y="37" width="194" height="117" as="geometry" />
+        </mxCell>
+        <mxCell id="deck-card" value="" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.59;entryX=0;entryY=0.59;endArrow=none;html=0;strokeColor=#000000;" edge="1" parent="1" source="decks" target="cards">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="one" value="1" style="text;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="218" y="97" width="24" height="23" as="geometry" />
+        </mxCell>
+        <mxCell id="many" value="0..N" style="text;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="264" y="97" width="46" height="23" as="geometry" />
+        </mxCell>
+        <mxCell id="cascade" value="ON DELETE CASCADE" style="text;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="124" y="204" width="280" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

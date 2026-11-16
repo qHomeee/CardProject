@@ -64,13 +64,14 @@
 - Практика 6. [Макеты экранов в Figma](https://www.figma.com/design/vGsWHmxJCV73DQ0EIwDe4Z?node-id=21-2) и [отчёт DOCX](docs/06-mockups.docx). Семь экранов в светлой и тёмной темах, состояния и примеры адаптации.
 - Практика 7. [Прототип в Figma](https://www.figma.com/proto/vGsWHmxJCV73DQ0EIwDe4Z/%D0%97%D0%B0%D0%BF%D0%BE%D0%BC%D0%BD%D0%B8-%C2%B7-%D0%94%D0%B8%D0%B7%D0%B0%D0%B9%D0%BD-%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%B0?node-id=21-2&p=f&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=33%3A2&show-proto-sidebar=1&page-id=21%3A2), [карта Draw.io](docs/design/07-navigation.drawio) и [отчёт DOCX](docs/07-prototype.docx). [Локальная версия](docs/design/07-prototype.html) открывается в браузере.
 - Практика 8. [Контракт OpenAPI](backend/openapi.yaml), [ER-диаграмма Draw.io](docs/diagrams/08-catalog-er.drawio) и [отчёт DOCX](docs/08-catalog-api.docx). Проект каталога, примеры запросов и доступ редактора.
+- Практика 9. [Сервер каталога и инструкция запуска](backend/README.md), [миграция PostgreSQL](backend/migrations/versions/0001_catalog.py) и [отчёт DOCX](docs/09-catalog-crud.docx). CRUD и редакторский доступ проверены на PostgreSQL.
 - [Исходник обоснования стека](docs/03-stack.md). `docs/tools/build_stack.py` собирает обязательный DOCX. Папка `docs/checks/` с локальными записями проверок исключена из Git.
 - [Исходник ТЗ](docs/02-tz.md) — рабочая версия для редактирования. `docs/tools/build_tz.py` собирает DOCX и исходники диаграммы; Markdown не заменяет обязательный DOCX.
 - `docs/tools/build_idea.py` собирает карточку идеи из разделов README. Оформление DOCX общее для всех практик. Times New Roman 14 pt, межстрочный интервал 1,5, отступ первой строки основного текста 1,25 см, белые таблицы с чёрным текстом и границами.
 - [Журнал прогресса](docs/progress.md) — выполненное, проверки, решения и открытые вопросы.
 
-Сохраняем существующую папку `KotlinProject/`. Перенос в `android/` выполним отдельным изменением при создании каркаса, когда проверим сборку. `backend/` содержит контракт каталога. Реализация БД и CRUD запланирована на практику 9.
+Сохраняем существующую папку `KotlinProject/`. Перенос в `android/` выполним отдельным изменением при создании каркаса, когда проверим сборку. `backend/` содержит FastAPI, миграции PostgreSQL, контракт и проверки каталога.
 
-Практики 1–8 оформлены в DOCX. Тег `v0.1-spec` отмечает завершение практик 1–3. Тег `v0.2-design` отмечает завершение практик 4–7 и проверку основного сценария в Figma.
+Практики 1–9 оформлены в DOCX. Тег `v0.1-spec` отмечает завершение практик 1–3. Тег `v0.2-design` отмечает завершение практик 4–7 и проверку основного сценария в Figma.
 
 Рабочая ветка проекта — `main`. Удалённый репозиторий на GitHub подключён.

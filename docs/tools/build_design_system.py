@@ -1,6 +1,7 @@
 """Собирает отчёт практики 5 из Markdown. Запуск: python docs/tools/build_design_system.py."""
 
 from pathlib import Path
+import re
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -65,7 +66,15 @@ def build_document(stem='05-design-system', footer_title='Дизайн-сист�
         if rows:
             insert_table(doc, rows, widths)
             rows = []
-        if line.startswith('# '):
+        picture = re.fullmatch(r'!\[([^\]]+)\]\(([^)]+)\)', line)
+        if picture:
+            alt, path = picture.groups()
+            image = doc.add_picture(str(DOCS / path), width=Cm(17))
+            image._inline.docPr.set('descr', alt)
+            doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        elif line == '<!-- pagebreak -->':
+            doc.add_page_break()
+        elif line.startswith('# '):
             doc.add_paragraph(line[2:], 'Title')
         elif line.startswith('## '):
             doc.add_heading(line[3:], 1)

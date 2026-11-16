@@ -1,0 +1,361 @@
+openapi: 3.1.0
+info:
+  title: Каталог наборов «Запомни»
+  version: 0.1.0
+  description: Проект контракта для практики 8. Чтение каталога публичное, изменение доступно редактору.
+tags:
+  - name: Наборы
+  - name: Карточки
+security: []
+paths:
+  /api/v1/decks:
+    get:
+      operationId: listDecks
+      tags: [Наборы]
+      summary: Найти наборы
+      description: >-
+        Сервер удаляет внешние пробелы и ищет подстроку названия без учёта регистра
+        через Unicode casefold. Символы % и _ ищутся буквально. Пустой запрос возвращает
+        весь каталог. Сортировка по нормализованному названию и затем по ID.
+      parameters:
+        - name: q
+          in: query
+          description: Подстрока названия, до 100 символов после удаления внешних пробелов.
+          schema: {type: string}
+          example: "  СТОЛИЦЫ  "
+      responses:
+        '200':
+          description: Найденные наборы. Если совпадений нет, items содержит пустой список.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DeckList'}
+              examples:
+                found:
+                  value:
+                    items:
+                      - id: 356f61bb-a918-4e0f-8cd8-369c1f0e318a
+                        title: Столицы Европы
+                        description: Тренировка по географии
+                        card_count: 1
+                empty:
+                  value: {items: []}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+    post:
+      operationId: createDeck
+      tags: [Наборы]
+      summary: Создать пустой набор
+      security: [{EditorKey: []}]
+      requestBody: {$ref: '#/components/requestBodies/DeckWrite'}
+      responses:
+        '201':
+          description: Набор создан.
+          headers:
+            Location:
+              schema: {type: string, format: uri-reference}
+              example: /api/v1/decks/356f61bb-a918-4e0f-8cd8-369c1f0e318a
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DeckDetail'}
+              example:
+                id: 356f61bb-a918-4e0f-8cd8-369c1f0e318a
+                title: Столицы Европы
+                description: Тренировка по географии
+                cards: []
+        '401': {$ref: '#/components/responses/EditorRequired'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+  /api/v1/decks/{deck_id}:
+    parameters:
+      - $ref: '#/components/parameters/DeckId'
+    get:
+      operationId: getDeck
+      tags: [Наборы]
+      summary: Получить набор со всеми карточками
+      description: Единый снимок для просмотра и скачивания. Карточки отсортированы по ID.
+      responses:
+        '200': {$ref: '#/components/responses/DeckDetail'}
+        '404': {$ref: '#/components/responses/DeckNotFound'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+    put:
+      operationId: updateDeck
+      tags: [Наборы]
+      summary: Заменить название и описание набора
+      description: Карточки набора сохраняются.
+      security: [{EditorKey: []}]
+      requestBody: {$ref: '#/components/requestBodies/DeckWrite'}
+      responses:
+        '200': {$ref: '#/components/responses/DeckDetail'}
+        '401': {$ref: '#/components/responses/EditorRequired'}
+        '404': {$ref: '#/components/responses/DeckNotFound'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+    delete:
+      operationId: deleteDeck
+      tags: [Наборы]
+      summary: Удалить набор и его карточки
+      security: [{EditorKey: []}]
+      responses:
+        '204': {description: Набор и его карточки удалены. Тело ответа отсутствует.}
+        '401': {$ref: '#/components/responses/EditorRequired'}
+        '404': {$ref: '#/components/responses/DeckNotFound'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+  /api/v1/decks/{deck_id}/cards:
+    parameters:
+      - $ref: '#/components/parameters/DeckId'
+    post:
+      operationId: createCard
+      tags: [Карточки]
+      summary: Добавить карточку в набор
+      security: [{EditorKey: []}]
+      requestBody: {$ref: '#/components/requestBodies/CardWrite'}
+      responses:
+        '201':
+          description: Карточка создана.
+          headers:
+            Location:
+              schema: {type: string, format: uri-reference}
+              example: /api/v1/decks/356f61bb-a918-4e0f-8cd8-369c1f0e318a/cards/759d7649-4dec-462e-919e-207ac3971fe6
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Card'}
+              examples:
+                created: {$ref: '#/components/examples/Card'}
+        '401': {$ref: '#/components/responses/EditorRequired'}
+        '404': {$ref: '#/components/responses/DeckNotFound'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+  /api/v1/decks/{deck_id}/cards/{card_id}:
+    parameters:
+      - $ref: '#/components/parameters/DeckId'
+      - $ref: '#/components/parameters/CardId'
+    get:
+      operationId: getCard
+      tags: [Карточки]
+      summary: Получить одну карточку из набора
+      responses:
+        '200': {$ref: '#/components/responses/Card'}
+        '404': {$ref: '#/components/responses/CardNotFound'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+    put:
+      operationId: updateCard
+      tags: [Карточки]
+      summary: Заменить вопрос и ответ карточки
+      security: [{EditorKey: []}]
+      requestBody: {$ref: '#/components/requestBodies/CardWrite'}
+      responses:
+        '200': {$ref: '#/components/responses/Card'}
+        '401': {$ref: '#/components/responses/EditorRequired'}
+        '404': {$ref: '#/components/responses/CardNotFound'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+    delete:
+      operationId: deleteCard
+      tags: [Карточки]
+      summary: Удалить карточку из набора
+      security: [{EditorKey: []}]
+      responses:
+        '204': {description: Карточка удалена. Тело ответа отсутствует.}
+        '401': {$ref: '#/components/responses/EditorRequired'}
+        '404': {$ref: '#/components/responses/CardNotFound'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+components:
+  securitySchemes:
+    EditorKey:
+      type: apiKey
+      in: header
+      name: X-Editor-Key
+      description: Секрет редактора передаётся только по HTTPS.
+  parameters:
+    DeckId:
+      name: deck_id
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+      example: 356f61bb-a918-4e0f-8cd8-369c1f0e318a
+    CardId:
+      name: card_id
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+      example: 759d7649-4dec-462e-919e-207ac3971fe6
+  schemas:
+    DeckWrite:
+      type: object
+      additionalProperties: false
+      required: [title]
+      properties:
+        title:
+          type: string
+          description: От 1 до 100 символов после удаления внешних пробелов.
+        description:
+          type: string
+          default: ''
+          description: До 500 символов после удаления внешних пробелов. При пропуске сохраняется пустая строка.
+    CardWrite:
+      type: object
+      additionalProperties: false
+      required: [question, answer]
+      properties:
+        question:
+          type: string
+          description: От 1 до 1000 символов после удаления внешних пробелов.
+        answer:
+          type: string
+          description: От 1 до 1000 символов после удаления внешних пробелов.
+    DeckSummary:
+      type: object
+      required: [id, title, description, card_count]
+      properties:
+        id: {type: string, format: uuid}
+        title: {type: string, minLength: 1, maxLength: 100}
+        description: {type: string, maxLength: 500}
+        card_count: {type: integer, minimum: 0}
+    DeckList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/DeckSummary'}
+    DeckDetail:
+      type: object
+      required: [id, title, description, cards]
+      properties:
+        id: {type: string, format: uuid}
+        title: {type: string, minLength: 1, maxLength: 100}
+        description: {type: string, maxLength: 500}
+        cards:
+          type: array
+          items: {$ref: '#/components/schemas/Card'}
+    Card:
+      type: object
+      required: [id, question, answer]
+      properties:
+        id: {type: string, format: uuid}
+        question: {type: string, minLength: 1, maxLength: 1000}
+        answer: {type: string, minLength: 1, maxLength: 1000}
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum: [editor_required, deck_not_found, card_not_found, validation_error, internal_error, service_unavailable]
+            message: {type: string}
+            fields:
+              type: array
+              items:
+                type: object
+                required: [field, message]
+                properties:
+                  field: {type: string}
+                  message: {type: string}
+  requestBodies:
+    DeckWrite:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/DeckWrite'}
+          example: {title: Столицы Европы, description: Тренировка по географии}
+    CardWrite:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/CardWrite'}
+          example: {question: 'Столица Португалии?', answer: Лиссабон}
+  examples:
+    Card:
+      value:
+        id: 759d7649-4dec-462e-919e-207ac3971fe6
+        question: Столица Португалии?
+        answer: Лиссабон
+  responses:
+    DeckDetail:
+      description: Набор со всеми карточками.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/DeckDetail'}
+          example:
+            id: 356f61bb-a918-4e0f-8cd8-369c1f0e318a
+            title: Столицы Европы
+            description: Тренировка по географии
+            cards:
+              - id: 759d7649-4dec-462e-919e-207ac3971fe6
+                question: Столица Португалии?
+                answer: Лиссабон
+    Card:
+      description: Карточка выбранного набора.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Card'}
+          examples:
+            found: {$ref: '#/components/examples/Card'}
+    EditorRequired:
+      description: Редакторский ключ отсутствует или неверен.
+      headers:
+        WWW-Authenticate:
+          schema: {type: string}
+          example: APIKey
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            error: {code: editor_required, message: Требуется доступ редактора.}
+    DeckNotFound:
+      description: Набор не найден.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            error: {code: deck_not_found, message: Набор не найден.}
+    CardNotFound:
+      description: Карточки с таким ID в указанном наборе нет.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            error: {code: card_not_found, message: Карточка в этом наборе не найдена.}
+    ValidationError:
+      description: Параметры или тело запроса не прошли проверку.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            error:
+              code: validation_error
+              message: Проверьте поля запроса.
+              fields:
+                - field: body.title
+                  message: Введите название набора.
+    InternalError:
+      description: Непредвиденная ошибка сервера.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            error: {code: internal_error, message: Не удалось выполнить запрос.}
+    Unavailable:
+      description: Сервис временно недоступен или редактирование не настроено.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            error: {code: service_unavailable, message: Операция временно недоступна.}

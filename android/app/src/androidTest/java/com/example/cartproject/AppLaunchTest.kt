@@ -18,11 +18,12 @@ class AppLaunchTest {
     /** Дожидается, когда приложение покажет пустой локальный список. */
     @Test
     fun opensMyDecksInEmptyState() {
+        val title = composeRule.activity.getString(R.string.my_decks_title)
         val emptyMessage = composeRule.activity.getString(R.string.my_decks_empty)
         composeRule.waitUntil(timeoutMillis = 5_000) {
             composeRule.onAllNodesWithText(emptyMessage).fetchSemanticsNodes().isNotEmpty()
         }
-        composeRule.onNodeWithText(composeRule.activity.getString(R.string.my_decks_title)).assertIsDisplayed()
+        composeRule.onNodeWithText(title).assertIsDisplayed()
         composeRule.onNodeWithText(emptyMessage).assertIsDisplayed()
     }
 }

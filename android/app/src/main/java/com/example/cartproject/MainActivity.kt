@@ -4,44 +4,31 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.cartproject.ui.theme.CartProjectTheme
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.cartproject.presentation.decks.MyDecksScreen
+import com.example.cartproject.presentation.decks.MyDecksViewModel
+import com.example.cartproject.presentation.theme.CartProjectTheme
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
+/** Открывает стартовый экран приложения. */
 class MainActivity : ComponentActivity() {
+    private val myDecksViewModel: MyDecksViewModel by viewModel()
+
+    /** Подписывает Compose на состояние ViewModel с учётом жизненного цикла. */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val state by myDecksViewModel.uiState.collectAsStateWithLifecycle()
             CartProjectTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Scaffold { innerPadding ->
+                    MyDecksScreen(state, Modifier.padding(innerPadding))
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CartProjectTheme {
-        Greeting("Android")
     }
 }

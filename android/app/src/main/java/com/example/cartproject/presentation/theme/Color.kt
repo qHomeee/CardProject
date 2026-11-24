@@ -1,4 +1,4 @@
-package com.example.cartproject.ui.theme
+package com.example.cartproject.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

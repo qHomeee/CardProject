@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">CartProject</string>
+    <string name="app_name">Запомни</string>
+    <string name="my_decks_title">Мои наборы</string>
+    <string name="my_decks_empty">Локальных наборов пока нет</string>
 </resources>

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CartProject"
+rootProject.name = "Zapomni"
 include(":app")
 include(":domain")

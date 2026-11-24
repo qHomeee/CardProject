@@ -1,0 +1,13 @@
+<resources>
+    <string name="preview_show_answer">Показать ответ</string>
+    <string name="preview_hide_answer">Скрыть ответ</string>
+    <string name="preview_saving">Сохранение</string>
+    <string name="preview_deck_label">Название набора</string>
+    <string name="preview_deck_placeholder">Введите название</string>
+    <string name="preview_gesture_switch">Управление жестами</string>
+    <string name="preview_deck_title">Столицы Европы</string>
+    <string name="preview_deck_count">12 карточек</string>
+    <string name="preview_question">Столица Португалии</string>
+    <string name="preview_answer">Лиссабон</string>
+    <string name="preview_empty_message">Создайте набор или скачайте его из каталога.</string>
+</resources>

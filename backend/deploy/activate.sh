@@ -44,8 +44,8 @@ previous="$(readlink "$root/current" || true)"
 next_link="$root/.current-$$"
 ln -s "$release" "$next_link"
 mv -Tf "$next_link" "$root/current"
-if systemctl restart zapomni.service && curl --fail --silent --show-error --retry 5 \
-    --retry-connrefused --retry-delay 1 --max-time 4 http://127.0.0.1:8000/api/v1/decks >/dev/null; then
+if systemctl restart zapomni.service && curl --fail --silent --show-error --retry 9 \
+    --retry-connrefused --retry-delay 5 --retry-max-time 55 --max-time 4 http://127.0.0.1:8000/api/v1/decks >/dev/null; then
     systemctl is-active zapomni.service
 else
     if [ -n "$previous" ] && [ "$previous" != "$release" ]; then

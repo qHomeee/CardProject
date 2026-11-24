@@ -13,7 +13,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.example.cartproject.R
+import com.example.cartproject.domain.decks.DeckOrigin
 import com.example.cartproject.presentation.components.DeckCard
+import com.example.cartproject.presentation.components.DeckCardOrigin
 import com.example.cartproject.presentation.components.StatusKind
 import com.example.cartproject.presentation.components.StatusMessage
 import com.example.cartproject.presentation.theme.ZapomniSize
@@ -43,11 +45,14 @@ internal fun MyDecksScreen(state: MyDecksUiState, modifier: Modifier = Modifier)
                         StatusMessage(StatusKind.Empty, stringResource(R.string.my_decks_empty))
                     }
                 } else {
-                    items(state.decks, key = { it.id }) { deck ->
+                    items(state.decks, key = { it.id.value }) { deck ->
                         DeckCard(
                             title = deck.title,
                             details = deck.description,
-                            origin = null,
+                            origin = when (deck.origin) {
+                                DeckOrigin.Owned -> DeckCardOrigin.Owned
+                                is DeckOrigin.Downloaded -> DeckCardOrigin.Downloaded
+                            },
                         )
                     }
                 }

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cartproject.presentation.decks.MyDecksScreen
 import com.example.cartproject.presentation.decks.MyDecksViewModel
-import com.example.cartproject.presentation.theme.CartProjectTheme
+import com.example.cartproject.presentation.theme.ZapomniTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /** Открывает стартовый экран приложения. */
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val state by myDecksViewModel.uiState.collectAsStateWithLifecycle()
-            CartProjectTheme {
+            ZapomniTheme {
                 Scaffold { innerPadding ->
                     MyDecksScreen(state, Modifier.padding(innerPadding))
                 }

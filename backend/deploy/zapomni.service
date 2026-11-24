@@ -1,0 +1,23 @@
+[Unit]
+Description=Zapomni catalog API
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=exec
+User=zapomni
+Group=zapomni
+WorkingDirectory=/opt/zapomni/current
+EnvironmentFile=/etc/zapomni/catalog.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/zapomni/current/.venv/bin/uvicorn catalog.main:app --host 127.0.0.1 --port 8000 --proxy-headers --forwarded-allow-ips=127.0.0.1
+Restart=on-failure
+RestartSec=3s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+[Unit]
+Description=Renew the Zapomni HTTPS certificate
+
+[Service]
+Type=oneshot
+ExecStart=/opt/zapomni/tooling/bin/certbot renew --quiet --deploy-hook "systemctl reload nginx"

@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Каталог наборов «Запомни»
   version: 0.1.0
-  description: Чтение каталога публичное, изменение доступно редактору. Неизвестный путь API возвращает 404, неподдерживаемый метод — 405. Оба ответа имеют общую схему Error.
+  description: Чтение каталога публичное, изменение доступно редактору. Неизвестный путь API возвращает 404, неподдерживаемый метод — 405. Оба ответа имеют общую схему Error. Публичный HTTPS-сервер принимает тело запроса до 64 КиБ.
 tags:
   - name: Наборы
   - name: Карточки
@@ -64,6 +64,7 @@ paths:
                 description: Тренировка по географии
                 cards: []
         '401': {$ref: '#/components/responses/EditorRequired'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
         '422': {$ref: '#/components/responses/ValidationError'}
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
@@ -92,6 +93,7 @@ paths:
         '200': {$ref: '#/components/responses/DeckDetail'}
         '401': {$ref: '#/components/responses/EditorRequired'}
         '404': {$ref: '#/components/responses/DeckNotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
         '422': {$ref: '#/components/responses/ValidationError'}
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
@@ -130,6 +132,7 @@ paths:
                 created: {$ref: '#/components/examples/Card'}
         '401': {$ref: '#/components/responses/EditorRequired'}
         '404': {$ref: '#/components/responses/DeckNotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
         '422': {$ref: '#/components/responses/ValidationError'}
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
@@ -157,6 +160,7 @@ paths:
         '200': {$ref: '#/components/responses/Card'}
         '401': {$ref: '#/components/responses/EditorRequired'}
         '404': {$ref: '#/components/responses/CardNotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
         '422': {$ref: '#/components/responses/ValidationError'}
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
@@ -258,7 +262,7 @@ components:
           properties:
             code:
               type: string
-              enum: [editor_required, deck_not_found, card_not_found, route_not_found, method_not_allowed, validation_error, internal_error, service_unavailable]
+              enum: [editor_required, deck_not_found, card_not_found, route_not_found, method_not_allowed, payload_too_large, validation_error, internal_error, service_unavailable]
             message: {type: string}
             fields:
               type: array
@@ -345,6 +349,13 @@ components:
               fields:
                 - field: body.title
                   message: Введите название набора.
+    PayloadTooLarge:
+      description: На публичном сервере тело запроса превышает 64 КиБ.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            error: {code: payload_too_large, message: Размер запроса превышает 64 КиБ.}
     InternalError:
       description: Непредвиденная ошибка сервера.
       content:

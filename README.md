@@ -55,7 +55,7 @@
 
 ## Текущее состояние и файлы
 
-- `KotlinProject/` — существующий стартовый Android-проект с Kotlin, Compose, Gradle Kotlin DSL и version catalog; экран `Hello Android`. Debug-сборка и один шаблонный unit-тест проверены; Android Lint завершён с восемью предупреждениями. Это проверка исходной основы, а не готового MVP.
+- [Android-проект](android) состоит из модуля приложения :app и отдельного Kotlin/JVM-модуля :domain. Каркас открывает экран «Мои наборы» и получает данные через Koin.
 - `docs/01-idea.docx` — карточка идеи для практики 1; статус проверки указан в `docs/progress.md`.
 - `docs/02-tz.docx` — техническое задание для практики 2: семь экранов, 16 функциональных требований, критерии приёмки, шесть user stories, MoSCoW и use-case-диаграмма.
 - `docs/03-stack.docx` — практика 3: выбор инструментов, проверка существующих версий, сравнение FastAPI и Django REST framework, тестирование, деплой и риски.
@@ -67,13 +67,23 @@
 - Практика 9. [Сервер каталога и инструкция запуска](backend/README.md), [миграция PostgreSQL](backend/migrations/versions/0001_catalog.py) и [отчёт DOCX](docs/09-catalog-crud.docx). CRUD и редакторский доступ проверены на PostgreSQL.
 - Практика 10. [Публичный API каталога](https://153.80.185.223/api/v1/decks), [Swagger UI](https://153.80.185.223/docs), [коллекция Postman](backend/catalog.postman_collection.json) и [отчёт DOCX](docs/10-catalog-deploy.docx).
 - Практика 11. [Тест-план и 12 тест-кейсов](docs/11-backend-tests.docx), [модульные тесты](backend/tests/unit). Прошли 22 модульных теста и 33 проверки в полном прогоне.
+- Практика 12. [Отчёт о каркасе Android](docs/12-android-scaffold.docx) и [каталог версий](android/gradle/libs.versions.toml). Прошли debug-сборка, JVM-тест Koin и ktlint.
 - [Исходник обоснования стека](docs/03-stack.md). `docs/tools/build_stack.py` собирает обязательный DOCX. Папка `docs/checks/` с локальными записями проверок исключена из Git.
 - [Исходник ТЗ](docs/02-tz.md) — рабочая версия для редактирования. `docs/tools/build_tz.py` собирает DOCX и исходники диаграммы; Markdown не заменяет обязательный DOCX.
 - `docs/tools/build_idea.py` собирает карточку идеи из разделов README. Оформление DOCX общее для всех практик. Times New Roman 14 pt, межстрочный интервал 1,5, отступ первой строки основного текста 1,25 см, белые таблицы с чёрным текстом и границами.
 - [Журнал прогресса](docs/progress.md) — выполненное, проверки, решения и открытые вопросы.
 
-Сохраняем существующую папку `KotlinProject/`. Перенос в `android/` выполним отдельным изменением при создании каркаса, когда проверим сборку. `backend/` содержит FastAPI, миграции PostgreSQL, контракт и проверки каталога.
+`backend/` содержит FastAPI, миграции PostgreSQL, контракт и проверки каталога.
 
-Практики 1–11 оформлены в DOCX. Тег `v0.1-spec` отмечает завершение практик 1–3. Тег `v0.2-design` отмечает завершение практик 4–7 и проверку основного сценария в Figma.
+Практики 1–12 оформлены в DOCX. Тег `v0.1-spec` отмечает завершение практик 1–3. Тег `v0.2-design` отмечает завершение практик 4–7 и проверку основного сценария в Figma.
 
 Рабочая ветка проекта — `main`. Удалённый репозиторий на GitHub подключён.
+
+## Сборка Android
+
+Откройте папку `android/` в Android Studio. Для Gradle используется JDK 25, для сборки нужен SDK API 37. Команды PowerShell из папки `android/` приведены ниже.
+
+```powershell
+.\gradlew.bat :app:assembleDebug
+.\gradlew.bat :app:testDebugUnitTest :ktlintCheck :app:lintDebug
+```

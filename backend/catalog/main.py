@@ -10,11 +10,13 @@ import yaml
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import DBAPIError, TimeoutError
+from starlette.exceptions import HTTPException
 
 from catalog.database import database_engine
 from catalog.errors import (
     CatalogError,
     catalog_error_handler,
+    catalog_http_error_handler,
     database_error_handler,
     internal_error_handler,
     validation_error_handler,
@@ -41,6 +43,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Каталог наборов «Запомни»", version="0.1.0", lifespan=lifespan)
     app.include_router(router)
     app.add_exception_handler(CatalogError, catalog_error_handler)
+    app.add_exception_handler(HTTPException, catalog_http_error_handler)
     app.add_exception_handler(RequestValidationError, validation_error_handler)
     app.add_exception_handler(DBAPIError, database_error_handler)
     app.add_exception_handler(TimeoutError, database_error_handler)

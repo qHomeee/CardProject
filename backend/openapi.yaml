@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Каталог наборов «Запомни»
   version: 0.1.0
-  description: Проект контракта для практики 8. Чтение каталога публичное, изменение доступно редактору.
+  description: Чтение каталога публичное, изменение доступно редактору. Неизвестный путь API возвращает 404, неподдерживаемый метод — 405. Оба ответа имеют общую схему Error.
 tags:
   - name: Наборы
   - name: Карточки
@@ -258,7 +258,7 @@ components:
           properties:
             code:
               type: string
-              enum: [editor_required, deck_not_found, card_not_found, validation_error, internal_error, service_unavailable]
+              enum: [editor_required, deck_not_found, card_not_found, route_not_found, method_not_allowed, validation_error, internal_error, service_unavailable]
             message: {type: string}
             fields:
               type: array

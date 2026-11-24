@@ -62,7 +62,10 @@ internal fun ZapomniTextField(
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth().semantics { contentDescription = label },
+            modifier = Modifier.fillMaxWidth().semantics {
+                contentDescription = label
+                errorMessage?.let { error(it) }
+            },
             enabled = enabled,
             singleLine = singleLine,
             textStyle = type.bodyLarge.copy(color = textColor),
@@ -88,7 +91,6 @@ internal fun ZapomniTextField(
         if (errorMessage != null) {
             Text(
                 text = errorMessage,
-                modifier = Modifier.semantics { error(errorMessage) },
                 color = palette.danger,
                 style = type.bodySmall,
             )

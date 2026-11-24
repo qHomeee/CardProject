@@ -4,6 +4,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 
 private fun roboto(size: Int, lineHeight: Int, tracking: Double, weight: FontWeight) = TextStyle(
@@ -12,6 +13,7 @@ private fun roboto(size: Int, lineHeight: Int, tracking: Double, weight: FontWei
     fontSize = size.sp,
     lineHeight = lineHeight.sp,
     letterSpacing = tracking.sp,
+    lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None),
 )
 
 private val display = roboto(32, 40, -0.5, FontWeight.Bold)

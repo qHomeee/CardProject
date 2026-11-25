@@ -77,6 +77,11 @@ private class SettingsStoreFake : SettingsStore {
 
     override fun observe() = state
 
+    override suspend fun saveGesturesEnabled(enabled: Boolean): Outcome<Unit> {
+        val current = (state.value as Outcome.Success).value
+        return save(current.copy(gesturesEnabled = enabled))
+    }
+
     override suspend fun save(settings: UserSettings): Outcome<Unit> {
         if (reject) return Outcome.Failure(AppError.LocalWrite)
         state.value = Outcome.Success(settings)

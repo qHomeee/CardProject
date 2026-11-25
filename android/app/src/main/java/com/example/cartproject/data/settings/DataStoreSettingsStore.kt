@@ -2,6 +2,7 @@ package com.example.cartproject.data.settings
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -39,23 +40,29 @@ internal class DataStoreSettingsStore(private val preferences: DataStore<Prefere
             emit(Outcome.Failure(AppError.LocalRead))
         }
 
-    override suspend fun save(settings: UserSettings): Outcome<Unit> = try {
-        preferences.edit { stored ->
-            stored[Theme] = settings.theme.name
-            stored[Gestures] = settings.gesturesEnabled
-            val time = when (val reminder = settings.reminder) {
-                is ReminderPreference.On -> reminder.time
-                is ReminderPreference.Off -> reminder.lastTime
-            }
-            stored[ReminderEnabled] = settings.reminder is ReminderPreference.On
-            if (time ==
-                null
-            ) {
-                stored.remove(ReminderTime)
-            } else {
-                stored[ReminderTime] = time.toString()
-            }
+    override suspend fun save(settings: UserSettings): Outcome<Unit> = write { stored ->
+        stored[Theme] = settings.theme.name
+        stored[Gestures] = settings.gesturesEnabled
+        val time = when (val reminder = settings.reminder) {
+            is ReminderPreference.On -> reminder.time
+            is ReminderPreference.Off -> reminder.lastTime
         }
+        stored[ReminderEnabled] = settings.reminder is ReminderPreference.On
+        if (time ==
+            null
+        ) {
+            stored.remove(ReminderTime)
+        } else {
+            stored[ReminderTime] = time.toString()
+        }
+    }
+
+    override suspend fun saveGesturesEnabled(enabled: Boolean): Outcome<Unit> = write { stored ->
+        stored[Gestures] = enabled
+    }
+
+    private suspend fun write(update: (MutablePreferences) -> Unit): Outcome<Unit> = try {
+        preferences.edit { update(it) }
         Outcome.Success(Unit)
     } catch (_: IOException) {
         currentCoroutineContext().ensureActive()

@@ -11,6 +11,9 @@ interface SettingsStore {
 
     /** Записывает все настройки одной операцией. */
     suspend fun save(settings: UserSettings): Outcome<Unit>
+
+    /** Меняет только предпочтение жестов, сохраняя остальные поля. */
+    suspend fun saveGesturesEnabled(enabled: Boolean): Outcome<Unit>
 }
 
 /** Результат согласования напоминаний с разрешением Android. */
@@ -32,6 +35,13 @@ data class SettingsUpdate(val settings: UserSettings, val reminder: Outcome<Remi
 class ObserveSettings(private val store: SettingsStore) {
     /** Возвращает поток из хранилища. */
     operator fun invoke(): Flow<Outcome<UserSettings>> = store.observe()
+}
+
+/** Сохраняет включение жестов без изменения темы и напоминаний. */
+class SetStudyGestures(private val store: SettingsStore) {
+    /** Записывает только выбранное значение переключателя. */
+    suspend operator fun invoke(enabled: Boolean): Outcome<Unit> =
+        store.saveGesturesEnabled(enabled)
 }
 
 /** Сохраняет настройки и затем согласует напоминание. */

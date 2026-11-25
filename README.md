@@ -69,6 +69,7 @@
 - Практика 11. [Тест-план и 12 тест-кейсов](docs/11-backend-tests.docx), [модульные тесты](backend/tests/unit). Прошли 22 модульных теста и 33 проверки в полном прогоне.
 - Практика 12. [Отчёт о каркасе Android](docs/12-android-scaffold.docx) и [каталог версий](android/gradle/libs.versions.toml). Прошли debug-сборка, JVM-тест Koin и ktlint.
 - Практика 13. [Отчёт о темах и компонентах Compose](docs/13-android-design-system.docx). В Android Studio доступен предпросмотр семи компонентов в обеих темах.
+- Практика 14. [Отчёт о доменной логике](docs/14-domain.docx) и [JVM-тесты](android/domain/src/test). Проверены расписание, очереди, повтор оценки, проверка текста и сценарии работы с наборами.
 - [Исходник обоснования стека](docs/03-stack.md). `docs/tools/build_stack.py` собирает обязательный DOCX. Папка `docs/checks/` с локальными записями проверок исключена из Git.
 - [Исходник ТЗ](docs/02-tz.md) — рабочая версия для редактирования. `docs/tools/build_tz.py` собирает DOCX и исходники диаграммы; Markdown не заменяет обязательный DOCX.
 - `docs/tools/build_idea.py` собирает карточку идеи из разделов README. Оформление DOCX общее для всех практик. Times New Roman 14 pt, межстрочный интервал 1,5, отступ первой строки основного текста 1,25 см, белые таблицы с чёрным текстом и границами.
@@ -76,7 +77,7 @@
 
 `backend/` содержит FastAPI, миграции PostgreSQL, контракт и проверки каталога.
 
-Практики 1–13 оформлены в DOCX. Тег `v0.1-spec` отмечает завершение практик 1–3. Тег `v0.2-design` отмечает завершение практик 4–7 и проверку основного сценария в Figma.
+Практики 1–14 оформлены в DOCX. Тег `v0.1-spec` отмечает завершение практик 1–3. Тег `v0.2-design` отмечает завершение практик 4–7 и проверку основного сценария в Figma.
 
 Рабочая ветка проекта — `main`. Удалённый репозиторий на GitHub подключён.
 
@@ -86,5 +87,5 @@
 
 ```powershell
 .\gradlew.bat :app:assembleDebug
-.\gradlew.bat :app:testDebugUnitTest :ktlintCheck :app:lintDebug
+.\gradlew.bat :domain:test :app:testDebugUnitTest :ktlintCheck :app:lintDebug
 ```

@@ -12,4 +12,26 @@
     <string name="deck_origin_downloaded">Офлайн</string>
     <string name="study_card_position">Карточка %1$d из %2$d</string>
     <string name="study_answer">Ответ</string>
+    <string name="catalog_search_label">Поиск наборов</string>
+    <string name="catalog_search_hint">Название набора</string>
+    <string name="catalog_search_too_long">Введите до 100 символов</string>
+    <string name="catalog_search_invalid">Исправьте текст запроса</string>
+    <string name="catalog_intro_title">Наборы для учёбы</string>
+    <string name="catalog_intro_body">Сохраняйте карточки и занимайтесь офлайн.</string>
+    <string name="catalog_all">Все наборы</string>
+    <string name="catalog_results">Результаты поиска</string>
+    <string name="catalog_loading">Загружаем каталог</string>
+    <string name="catalog_empty">В каталоге пока нет наборов</string>
+    <string name="catalog_no_matches">Ничего не найдено</string>
+    <string name="catalog_no_matches_help">Попробуйте другое название или очистите поиск.</string>
+    <string name="catalog_offline">Нет интернета</string>
+    <string name="catalog_offline_help">Скачанные наборы доступны в разделе «Мои наборы».</string>
+    <string name="catalog_open_my_decks">Открыть мои наборы</string>
+    <string name="catalog_load_error">Не удалось загрузить каталог</string>
+    <string name="catalog_network_error">Проверьте соединение и повторите попытку.</string>
+    <string name="catalog_timeout">Каталог не ответил вовремя. Попробуйте ещё раз.</string>
+    <string name="catalog_bad_response">Каталог вернул некорректные данные.</string>
+    <string name="catalog_server_error">Каталог временно недоступен. Попробуйте ещё раз.</string>
+    <string name="catalog_deck_details">%1$s · %2$s</string>
+    <string name="catalog_card_count">Карточек: %d</string>
 </resources>

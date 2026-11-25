@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -38,6 +39,7 @@ internal fun ZapomniTextField(
     errorMessage: String? = null,
     enabled: Boolean = true,
     singleLine: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
 ) {
     val palette = ZapomniTheme.colors
     val type = MaterialTheme.typography
@@ -81,10 +83,18 @@ internal fun ZapomniTextField(
                         .padding(horizontal = ZapomniSize.space12, vertical = ZapomniSize.space12),
                     contentAlignment = Alignment.CenterStart,
                 ) {
-                    if (value.isEmpty() && placeholder != null) {
-                        Text(placeholder, color = palette.textMuted, style = type.bodyLarge)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(ZapomniSize.space8),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        leadingIcon?.invoke()
+                        Box(Modifier.weight(1f)) {
+                            if (value.isEmpty() && placeholder != null) {
+                                Text(placeholder, color = palette.textMuted, style = type.bodyLarge)
+                            }
+                            inner()
+                        }
                     }
-                    inner()
                 }
             },
         )

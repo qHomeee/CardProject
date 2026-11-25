@@ -1,0 +1,29 @@
+package com.example.cartproject.domain.study
+
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+
+/** Доступность жестов для объяснения причины в интерфейсе. */
+enum class GestureAvailability { Available, Disabled, SensorUnavailable }
+
+/** Состояние датчика или распознанный жест без Android-типов. */
+sealed interface StudyGestureSignal {
+    /** Смена доступности управления жестами. */
+    data class Availability(val value: GestureAvailability) : StudyGestureSignal
+
+    /** Событие жеста, передаваемое слою презентации. */
+    enum class Action : StudyGestureSignal { Reveal, Remembered, NeedsReview }
+}
+
+/** Источник событий, освобождающий датчик при отмене подписки. */
+fun interface GestureSource {
+    /** Начинает получение событий при подписке на поток. */
+    fun events(): Flow<StudyGestureSignal>
+}
+
+/** Предоставляет события жестов на время активной подписки. */
+class ObserveStudyGestures(private val source: GestureSource) {
+    /** Запрашивает события при сборе потока и передаёт ему отмену подписки. */
+    operator fun invoke(): Flow<StudyGestureSignal> = flow { emitAll(source.events()) }
+}

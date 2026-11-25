@@ -17,4 +17,5 @@ sealed interface AppError {
     data object LocalRead : AppError
     data object LocalWrite : AppError
     data object ReviewConflict : AppError
+    data object ReminderSchedule : AppError
 }

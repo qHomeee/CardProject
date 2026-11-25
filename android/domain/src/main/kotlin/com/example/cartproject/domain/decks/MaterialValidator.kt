@@ -4,7 +4,13 @@ import com.example.cartproject.domain.AppError
 import com.example.cartproject.domain.Outcome
 
 /** Поля форм и поиска, для которых применяются ограничения. */
-enum class MaterialField { Title, Description, Question, Answer, Search }
+enum class MaterialField(val maxLength: Int) {
+    Title(100),
+    Description(500),
+    Question(1_000),
+    Answer(1_000),
+    Search(100),
+}
 
 /** Причина отклонения поля. */
 enum class MaterialIssue { Required, TooLong, UnsupportedCharacter }
@@ -20,30 +26,29 @@ object MaterialValidator {
     /** Проверяет название и описание набора. */
     fun deck(title: String, description: String): Outcome<DeckText> {
         val errors = mutableMapOf<MaterialField, MaterialIssue>()
-        val name = validate(title, MaterialField.Title, 100, true, errors)
-        val detail = validate(description, MaterialField.Description, 500, false, errors)
+        val name = validate(title, MaterialField.Title, true, errors)
+        val detail = validate(description, MaterialField.Description, false, errors)
         return result(DeckText(name, detail), errors)
     }
 
     /** Проверяет вопрос и ответ, сохраняя внутренние переносы строк. */
     fun card(question: String, answer: String): Outcome<CardText> {
         val errors = mutableMapOf<MaterialField, MaterialIssue>()
-        val prompt = validate(question, MaterialField.Question, 1_000, true, errors)
-        val response = validate(answer, MaterialField.Answer, 1_000, true, errors)
+        val prompt = validate(question, MaterialField.Question, true, errors)
+        val response = validate(answer, MaterialField.Answer, true, errors)
         return result(CardText(prompt, response), errors)
     }
 
     /** Приводит поисковую строку к форме, которую принимает API каталога. */
     fun search(query: String): Outcome<String> {
         val errors = mutableMapOf<MaterialField, MaterialIssue>()
-        val text = validate(query, MaterialField.Search, 100, false, errors)
+        val text = validate(query, MaterialField.Search, false, errors)
         return result(text, errors)
     }
 
     private fun validate(
         input: String,
         field: MaterialField,
-        limit: Int,
         required: Boolean,
         errors: MutableMap<MaterialField, MaterialIssue>,
     ): String {
@@ -52,7 +57,7 @@ object MaterialValidator {
             required && value.isEmpty() -> MaterialIssue.Required
             value.codePoints().anyMatch { it == 0 || it in 0xD800..0xDFFF } ->
                 MaterialIssue.UnsupportedCharacter
-            value.codePointCount(0, value.length) > limit -> MaterialIssue.TooLong
+            value.codePointCount(0, value.length) > field.maxLength -> MaterialIssue.TooLong
             else -> null
         }
         if (issue != null) errors[field] = issue

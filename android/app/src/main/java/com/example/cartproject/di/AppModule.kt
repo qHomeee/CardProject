@@ -8,6 +8,8 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 internal val appModule = module {
+    includes(catalogModule)
+
     single<LocalDeckList> { EmptyLocalDeckStore() }
     factory { ObserveMyDecks(get()) }
     viewModel { MyDecksViewModel(get()) }

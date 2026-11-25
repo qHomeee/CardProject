@@ -8,7 +8,7 @@ import com.example.cartproject.domain.study.SystemClock
 
 /** Проверяет поисковый запрос и использует правила поиска публичного каталога. */
 class SearchCatalog(private val reader: CatalogReader) {
-    /** Удаляет внешние пробелы и оставляет фильтрацию каталогу. */
+    /** Удаляет внешние пробелы и передаёт запрос в каталог. */
     suspend operator fun invoke(query: String): Outcome<List<CatalogDeckSummary>> =
         MaterialValidator.search(query).flatMap { reader.search(it) }
 }
@@ -36,30 +36,26 @@ class DownloadDeck(
                 Outcome.Success(existing)
             } else {
                 catalog.readDeck(id)
-                    .flatMap { validateSnapshot(id, it) }
+                    .flatMap { it.validatedFor(id) }
                     .flatMap { local.saveDownloadedDeck(it, clock.now()) }
             }
         }
+}
 
-    private fun validateSnapshot(
-        requestedId: CatalogDeckId,
-        content: CatalogDeckContent,
-    ): Outcome<CatalogDeckContent> {
-        val invalid = Outcome.Failure(AppError.InvalidCatalogData)
-        if (content.id != requestedId) return invalid
-        val text =
-            (MaterialValidator.deck(content.title, content.description) as? Outcome.Success)?.value
-                ?: return invalid
-        val ids = mutableSetOf<CatalogCardId>()
-        val cards = content.cards.map { card ->
-            if (!ids.add(card.id)) return invalid
-            val fields =
-                (MaterialValidator.card(card.question, card.answer) as? Outcome.Success)?.value
-                    ?: return invalid
-            card.copy(question = fields.question, answer = fields.answer)
-        }
-        return Outcome.Success(
-            content.copy(title = text.title, description = text.description, cards = cards),
-        )
+/** Проверяет ID снимка, уникальность карточек и текст перед показом или сохранением. */
+fun CatalogDeckContent.validatedFor(requestedId: CatalogDeckId): Outcome<CatalogDeckContent> {
+    val invalid = Outcome.Failure(AppError.InvalidCatalogData)
+    if (id != requestedId) return invalid
+    val text =
+        (MaterialValidator.deck(title, description) as? Outcome.Success)?.value ?: return invalid
+    val ids = mutableSetOf<CatalogCardId>()
+    val normalizedCards = cards.map { card ->
+        if (!ids.add(card.id)) return invalid
+        val fields = (MaterialValidator.card(card.question, card.answer) as? Outcome.Success)?.value
+            ?: return invalid
+        card.copy(question = fields.question, answer = fields.answer)
     }
+    return Outcome.Success(
+        copy(title = text.title, description = text.description, cards = normalizedCards),
+    )
 }

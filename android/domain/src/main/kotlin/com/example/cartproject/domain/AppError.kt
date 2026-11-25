@@ -12,6 +12,12 @@ sealed interface AppError {
     data object CardNotFound : AppError
     data object ReadOnlyDeck : AppError
     data object Network : AppError
+
+    /** Каталог не ответил в пределах допустимого времени. */
+    data object CatalogTimeout : AppError
+
+    /** Каталог отклонил запрос или ожидаемый маршрут недоступен. */
+    data object CatalogRequestRejected : AppError
     data object CatalogUnavailable : AppError
     data object InvalidCatalogData : AppError
     data object LocalRead : AppError

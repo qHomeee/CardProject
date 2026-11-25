@@ -1,9 +1,12 @@
 package com.example.cartproject.data.local
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cartproject.MainActivity
 import com.example.cartproject.domain.Outcome
@@ -32,6 +35,7 @@ class SavedDeckActivityTest {
         val title = "Офлайн набор ${UUID.randomUUID().toString().take(6)}"
         val id = runBlocking { (save(null, title, "Проверка Room") as Outcome.Success).value }
         try {
+            rule.onNode(hasText("Мои наборы") and isSelectable()).performClick()
             waitForTitle(title)
             rule.activityRule.scenario.recreate()
             waitForTitle(title)

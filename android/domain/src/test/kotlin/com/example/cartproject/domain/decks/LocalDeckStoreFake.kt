@@ -6,6 +6,7 @@ import com.example.cartproject.domain.study.ReviewSchedule
 import com.example.cartproject.domain.study.ScheduledCard
 import java.time.Instant
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 
 /** Хранилище для проверки вызовов и поведения контрактов без Room. */
 internal class LocalDeckStoreFake : LocalDeckStore {
@@ -24,7 +25,7 @@ internal class LocalDeckStoreFake : LocalDeckStore {
         deckRows.value += deck
     }
 
-    override fun observeDecks() = deckRows
+    override fun observeDecks() = deckRows.map { Outcome.Success(it) }
 
     override suspend fun readDeck(id: LocalDeckId): Outcome<LocalDeckContent> {
         reads++

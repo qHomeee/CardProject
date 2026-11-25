@@ -16,13 +16,18 @@ import com.example.cartproject.R
 import com.example.cartproject.domain.decks.DeckOrigin
 import com.example.cartproject.presentation.components.DeckCard
 import com.example.cartproject.presentation.components.DeckCardOrigin
+import com.example.cartproject.presentation.components.StatusAction
 import com.example.cartproject.presentation.components.StatusKind
 import com.example.cartproject.presentation.components.StatusMessage
 import com.example.cartproject.presentation.theme.ZapomniSize
 
 /** Отображает состояние чтения локальных наборов. */
 @Composable
-internal fun MyDecksScreen(state: MyDecksUiState, modifier: Modifier = Modifier) {
+internal fun MyDecksScreen(
+    state: MyDecksUiState,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(ZapomniSize.space16),
@@ -38,6 +43,13 @@ internal fun MyDecksScreen(state: MyDecksUiState, modifier: Modifier = Modifier)
         when (state) {
             MyDecksUiState.Loading -> item {
                 StatusMessage(StatusKind.Loading, stringResource(R.string.my_decks_loading))
+            }
+            MyDecksUiState.Error -> item {
+                StatusMessage(
+                    kind = StatusKind.Error,
+                    title = stringResource(R.string.my_decks_read_error),
+                    action = StatusAction(stringResource(R.string.retry), onRetry),
+                )
             }
             is MyDecksUiState.Content -> {
                 if (state.decks.isEmpty()) {

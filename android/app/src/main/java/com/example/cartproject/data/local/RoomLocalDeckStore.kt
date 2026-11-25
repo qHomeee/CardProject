@@ -14,7 +14,12 @@ import com.example.cartproject.domain.decks.LocalDeckStore
 import com.example.cartproject.domain.decks.OwnCardWrite
 import com.example.cartproject.domain.study.ReviewSchedule
 import java.time.Instant
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 /** Сохраняет свои наборы и скачанные снимки в SQLite через Room. */
@@ -22,8 +27,15 @@ internal class RoomLocalDeckStore(private val database: ZapomniDatabase) : Local
     private val decks = database.decks()
     private val reviews = database.reviews()
 
-    override fun observeDecks(): Flow<List<Deck>> =
-        decks.observeDecks().map { rows -> rows.map(DeckEntity::toDomain) }
+    override fun observeDecks(): Flow<Outcome<List<Deck>>> = flow { emitAll(decks.observeDecks()) }
+        .map<List<DeckEntity>, Outcome<List<Deck>>> { rows ->
+            Outcome.Success(rows.map(DeckEntity::toDomain))
+        }
+        .catch { failure ->
+            if (!failure.isLocalDatabaseFailure()) throw failure
+            currentCoroutineContext().ensureActive()
+            emit(Outcome.Failure(AppError.LocalRead))
+        }
 
     override suspend fun readDeck(id: LocalDeckId): Outcome<LocalDeckContent> =
         sqliteOutcome(AppError.LocalRead) {

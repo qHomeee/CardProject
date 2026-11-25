@@ -3,6 +3,8 @@
     <string name="my_decks_title">Мои наборы</string>
     <string name="my_decks_empty">Наборов пока нет</string>
     <string name="my_decks_loading">Загружаем наборы</string>
+    <string name="my_decks_read_error">Не удалось прочитать наборы</string>
+    <string name="retry">Повторить</string>
     <string name="tab_catalog">Каталог</string>
     <string name="tab_settings">Настройки</string>
     <string name="deck_origin_catalog">Каталог</string>

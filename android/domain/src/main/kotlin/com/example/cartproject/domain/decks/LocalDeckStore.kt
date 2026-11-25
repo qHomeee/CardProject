@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 /** Чтение списка локальных наборов для экрана «Мои наборы». */
 fun interface LocalDeckList {
-    /** Наблюдает изменения списка. */
-    fun observeDecks(): Flow<List<Deck>>
+    /** Наблюдает изменения списка и сообщает об ошибке чтения. */
+    fun observeDecks(): Flow<Outcome<List<Deck>>>
 }
 
 /** Данные для создания или редактирования собственной карточки. */

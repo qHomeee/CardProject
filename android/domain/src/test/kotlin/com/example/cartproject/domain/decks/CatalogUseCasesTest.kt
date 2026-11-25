@@ -100,7 +100,7 @@ class CatalogUseCasesTest {
             assertEquals(invalid, download(source))
         }
         assertEquals(0, local.downloadWrites)
-        assertTrue(local.observeDecks().first().isEmpty())
+        assertEquals(Outcome.Success(emptyList<Deck>()), local.observeDecks().first())
     }
 
     /** Сбои загрузки и хранилища оставляют возможность повторить команду. */
@@ -113,11 +113,11 @@ class CatalogUseCasesTest {
         catalog.content = content
         local.failDownload = true
         assertEquals(Outcome.Failure(AppError.LocalWrite), download(source))
-        assertTrue(local.observeDecks().first().isEmpty())
+        assertEquals(Outcome.Success(emptyList<Deck>()), local.observeDecks().first())
         assertTrue(local.cardRows.isEmpty())
         local.failDownload = false
         assertTrue(download(source) is Outcome.Success)
-        assertEquals(1, local.observeDecks().first().size)
+        assertEquals(1, (local.observeDecks().first() as Outcome.Success).value.size)
     }
 
     /** Одновременное скачивание сохраняет появившийся снимок. */
@@ -127,7 +127,7 @@ class CatalogUseCasesTest {
         val other = Deck(LocalDeckId(5), "Существующий снимок", "", DeckOrigin.Downloaded(source))
         local.beforeDownloadWrite = { local.add(other) }
         assertEquals(Outcome.Success(other.id), download(source))
-        assertEquals(listOf(other), local.observeDecks().first())
+        assertEquals(Outcome.Success(listOf(other)), local.observeDecks().first())
         assertTrue(local.cardRows.isEmpty())
     }
 }

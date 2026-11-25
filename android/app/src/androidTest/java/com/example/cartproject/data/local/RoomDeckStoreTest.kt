@@ -9,6 +9,7 @@ import com.example.cartproject.domain.decks.CatalogCard
 import com.example.cartproject.domain.decks.CatalogCardId
 import com.example.cartproject.domain.decks.CatalogDeckContent
 import com.example.cartproject.domain.decks.CatalogDeckId
+import com.example.cartproject.domain.decks.Deck
 import com.example.cartproject.domain.decks.DeckOrigin
 import com.example.cartproject.domain.decks.DeleteOwnMaterial
 import com.example.cartproject.domain.decks.RemoveDownloadedDeck
@@ -20,9 +21,9 @@ import java.util.UUID
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -80,7 +81,7 @@ class RoomDeckStoreTest {
         val second = async { store.saveDownloadedDeck(snapshot, now.plusSeconds(2)) }
         val result = first.await() as Outcome.Success
         assertEquals(result, second.await())
-        assertEquals(1, store.observeDecks().first().size)
+        assertEquals(1, (store.observeDecks().first() as Outcome.Success).value.size)
         val content = (store.readDeck(result.value) as Outcome.Success).value
         assertEquals(DeckOrigin.Downloaded(sourceId), content.deck.origin)
         assertEquals(2, content.cards.size)
@@ -89,7 +90,7 @@ class RoomDeckStoreTest {
             SaveOwnDeck(store)(result.value, "Другое", ""),
         )
         assertEquals(Outcome.Success(Unit), RemoveDownloadedDeck(store)(result.value))
-        assertTrue(store.observeDecks().first().isEmpty())
+        assertEquals(Outcome.Success(emptyList<Deck>()), store.observeDecks().first())
         assertEquals(0, rowCount("cards"))
         assertEquals(0, rowCount("review_schedules"))
     }
@@ -104,9 +105,18 @@ class RoomDeckStoreTest {
             """.trimIndent(),
         )
         assertEquals(Outcome.Failure(AppError.LocalWrite), store.saveDownloadedDeck(snapshot, now))
-        assertTrue(store.observeDecks().first().isEmpty())
+        assertEquals(Outcome.Success(emptyList<Deck>()), store.observeDecks().first())
         assertEquals(0, rowCount("cards"))
         assertEquals(0, rowCount("review_schedules"))
+    }
+
+    /** Ошибка чтения Room возвращается через поток. */
+    @Test
+    fun observesReadErrorAfterDatabaseCloses() = runBlocking {
+        assertEquals(Outcome.Success(emptyList<Deck>()), store.observeDecks().first())
+        db.close()
+        val outcome = withTimeout(3_000L) { store.observeDecks().first() }
+        assertEquals(Outcome.Failure(AppError.LocalRead), outcome)
     }
 
     private fun rowCount(table: String): Int = db.openHelper.readableDatabase

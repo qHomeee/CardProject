@@ -36,7 +36,10 @@ class LocalMaterialUseCasesTest {
             ObserveMyDecks(local)().take(2).toList()
         }
         local.add(owned)
-        assertEquals(listOf(emptyList(), listOf(owned)), observed.await())
+        assertEquals(
+            listOf(Outcome.Success(emptyList<Deck>()), Outcome.Success(listOf(owned))),
+            observed.await(),
+        )
     }
 
     /** Одинаковые названия допустимы, пустой набор сохраняется. */

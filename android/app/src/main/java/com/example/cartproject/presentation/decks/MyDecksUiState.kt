@@ -7,6 +7,9 @@ internal sealed interface MyDecksUiState {
     /** Первое значение списка ещё не получено. */
     data object Loading : MyDecksUiState
 
+    /** Чтение Room завершилось ошибкой. */
+    data object Error : MyDecksUiState
+
     /** Актуальный список, который может быть пустым. */
     data class Content(val decks: List<Deck>) : MyDecksUiState
 }

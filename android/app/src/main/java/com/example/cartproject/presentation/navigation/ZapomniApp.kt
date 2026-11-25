@@ -23,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -64,7 +66,7 @@ private data object SettingsRoute
 private data class CatalogDeckRoute(val id: String)
 
 @Serializable
-private data class LocalDeckRoute(val id: Long)
+internal data class LocalDeckRoute(val id: Long)
 
 /** Связывает вкладки и экраны выбранного набора с графом навигации. */
 @Composable
@@ -135,9 +137,16 @@ internal fun ZapomniApp(catalog: CatalogViewModel, myDecks: MyDecksViewModel) {
             }
             composable<MyDecksRoute> {
                 val state by myDecks.uiState.collectAsStateWithLifecycle()
-                MyDecksScreen(state, myDecks::retry, onOpenDeck = { id ->
-                    navController.navigate(LocalDeckRoute(id.value)) { launchSingleTop = true }
-                })
+                MyDecksScreen(
+                    state = state,
+                    onRetry = myDecks::retry,
+                    onOpenDeck = { id ->
+                        navController.navigate(LocalDeckRoute(id.value)) { launchSingleTop = true }
+                    },
+                    onCreateDeck = {
+                        navController.navigate(NewDeckRoute) { launchSingleTop = true }
+                    },
+                )
             }
             composable<SettingsRoute> { SettingsDestination() }
             composable<CatalogDeckRoute> { deckEntry ->
@@ -167,8 +176,24 @@ internal fun ZapomniApp(catalog: CatalogViewModel, myDecks: MyDecksViewModel) {
                             navController.popBackStack()
                         }
                     },
+                    onEdit = {
+                        if (navController.currentBackStackEntry == deckEntry) {
+                            navController.navigate(EditDeckRoute(id.value)) {
+                                launchSingleTop = true
+                            }
+                        }
+                    },
+                    onAddCard = {
+                        if (navController.currentBackStackEntry == deckEntry) {
+                            navController.navigate(CardEditorRoute(id.value)) {
+                                launchSingleTop =
+                                    true
+                            }
+                        }
+                    },
                 )
             }
+            materialEditorDestinations(navController)
         }
     }
 }
@@ -178,9 +203,12 @@ private fun DeckDetailDestination(
     source: DeckSource,
     onBack: () -> Unit,
     onOpenCopy: (LocalDeckId) -> Unit = {},
+    onEdit: (() -> Unit)? = null,
+    onAddCard: (() -> Unit)? = null,
 ) {
     val viewModel = koinViewModel<DeckDetailViewModel> { parametersOf(source) }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshLocal() }
     val action = state.action
     LaunchedEffect(action) {
         when (action) {
@@ -196,6 +224,8 @@ private fun DeckDetailDestination(
         onDownload = viewModel::download,
         onOpenCopy = onOpenCopy,
         onRemoveCopy = viewModel::removeSavedCopy,
+        onEdit = onEdit,
+        onAddCard = onAddCard,
     )
 }
 

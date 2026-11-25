@@ -65,6 +65,24 @@ internal class DeckDetailViewModel(
     fun retryRead() {
         if (readJob?.isActive == true || state.value.result is Outcome.Success) return
         state.update { it.copy(result = null) }
+        read()
+    }
+
+    /** Перечитывает свой набор после сохранения редактора. */
+    fun refreshLocal() {
+        val current = state.value
+        if (source !is DeckSource.Local ||
+            current.action != DeckDetailAction.Idle ||
+            current.result !is Outcome.Success ||
+            current.result.value.origin != DeckCardOrigin.Owned ||
+            readJob?.isActive == true
+        ) {
+            return
+        }
+        read()
+    }
+
+    private fun read() {
         readJob = viewModelScope.launch {
             val result = when (source) {
                 is DeckSource.Catalog -> readCatalog(source.id)

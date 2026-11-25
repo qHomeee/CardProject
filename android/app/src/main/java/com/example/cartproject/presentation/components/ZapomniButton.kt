@@ -28,10 +28,14 @@ internal fun ZapomniButton(
     secondary: Boolean = false,
     enabled: Boolean = true,
     loading: Boolean = false,
+    danger: Boolean = false,
 ) {
     val palette = ZapomniTheme.colors
-    val background = if (secondary) palette.surface else palette.primary
-    val foreground = if (secondary) palette.onPrimarySoft else palette.onPrimary
+    val (background, foreground) = when {
+        danger -> palette.dangerSoft to palette.danger
+        secondary -> palette.surface to palette.onPrimarySoft
+        else -> palette.primary to palette.onPrimary
+    }
     val border = if (secondary) {
         BorderStroke(1.dp, if (enabled && !loading) palette.outline else palette.border)
     } else {

@@ -5,21 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +21,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -36,10 +29,12 @@ import com.example.cartproject.R
 import com.example.cartproject.domain.AppError
 import com.example.cartproject.domain.Outcome
 import com.example.cartproject.domain.decks.LocalDeckId
+import com.example.cartproject.presentation.components.ConfirmRemovalDialog
 import com.example.cartproject.presentation.components.DeckCardOrigin
 import com.example.cartproject.presentation.components.StatusAction
 import com.example.cartproject.presentation.components.StatusKind
 import com.example.cartproject.presentation.components.StatusMessage
+import com.example.cartproject.presentation.components.SubscreenTopBar
 import com.example.cartproject.presentation.components.ZapomniButton
 import com.example.cartproject.presentation.theme.ZapomniSize
 import com.example.cartproject.presentation.theme.ZapomniTheme
@@ -53,12 +48,14 @@ internal fun DeckDetailScreen(
     onDownload: () -> Unit,
     onOpenCopy: (LocalDeckId) -> Unit,
     onRemoveCopy: () -> Unit,
+    onEdit: (() -> Unit)?,
+    onAddCard: (() -> Unit)?,
 ) {
     var confirmRemoval by rememberSaveable { mutableStateOf(false) }
     val detail = (state.result as? Outcome.Success)?.value
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(Modifier.widthIn(max = 640.dp).fillMaxSize()) {
-            DeckDetailHeader(onBack)
+            SubscreenTopBar(R.string.deck_detail_title, onBack)
             LazyColumn(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 contentPadding = PaddingValues(ZapomniSize.space16),
@@ -99,8 +96,18 @@ internal fun DeckDetailScreen(
                         if (deck.cards.isEmpty()) {
                             item {
                                 StatusMessage(
-                                    StatusKind.Empty,
-                                    stringResource(R.string.deck_detail_empty),
+                                    kind = StatusKind.Empty,
+                                    title = stringResource(R.string.deck_detail_empty),
+                                    action = if (deck.origin == DeckCardOrigin.Owned &&
+                                        onAddCard != null
+                                    ) {
+                                        StatusAction(
+                                            stringResource(R.string.editor_add_card),
+                                            onAddCard,
+                                        )
+                                    } else {
+                                        null
+                                    },
                                 )
                             }
                         } else {
@@ -116,57 +123,33 @@ internal fun DeckDetailScreen(
                     }
                 }
             }
-            DeckDetailActions(
-                state = state,
-                origin = detail?.origin,
-                onDownload = onDownload,
-                onOpenCopy = onOpenCopy,
-                onRemove = { confirmRemoval = true },
-            )
+            if (detail?.origin == DeckCardOrigin.Owned && onEdit != null) {
+                ZapomniButton(
+                    label = stringResource(R.string.editor_edit_deck),
+                    onClick = onEdit,
+                    modifier = Modifier.fillMaxWidth().padding(ZapomniSize.space16),
+                )
+            } else {
+                DeckDetailActions(
+                    state = state,
+                    origin = detail?.origin,
+                    onDownload = onDownload,
+                    onOpenCopy = onOpenCopy,
+                    onRemove = { confirmRemoval = true },
+                )
+            }
         }
     }
     if (confirmRemoval) {
-        AlertDialog(
-            onDismissRequest = { confirmRemoval = false },
-            title = { Text(stringResource(R.string.deck_remove_confirm_title)) },
-            text = { Text(stringResource(R.string.deck_remove_confirm_message)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    confirmRemoval = false
-                    onRemoveCopy()
-                }) {
-                    Text(
-                        stringResource(R.string.deck_remove_confirm),
-                        color = ZapomniTheme.colors.danger,
-                    )
-                }
+        ConfirmRemovalDialog(
+            title = R.string.deck_remove_confirm_title,
+            message = R.string.deck_remove_confirm_message,
+            onConfirm = {
+                confirmRemoval = false
+                onRemoveCopy()
             },
-            dismissButton = {
-                TextButton(onClick = { confirmRemoval = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            },
+            onDismiss = { confirmRemoval = false },
         )
-    }
-}
-
-@Composable
-private fun DeckDetailHeader(onBack: () -> Unit) {
-    Column(Modifier.padding(horizontal = ZapomniSize.space16)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    painterResource(R.drawable.ic_nav_back),
-                    contentDescription = stringResource(R.string.back),
-                )
-            }
-            Text(
-                text = stringResource(R.string.deck_detail_title),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.semantics { heading() },
-            )
-        }
-        HorizontalDivider(color = ZapomniTheme.colors.border)
     }
 }
 

@@ -3,6 +3,7 @@ package com.example.cartproject.presentation.decks
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import com.example.cartproject.presentation.components.DeckCardOrigin
 import com.example.cartproject.presentation.components.StatusAction
 import com.example.cartproject.presentation.components.StatusKind
 import com.example.cartproject.presentation.components.StatusMessage
+import com.example.cartproject.presentation.components.ZapomniButton
 import com.example.cartproject.presentation.theme.ZapomniSize
 
 /** Отображает состояние чтения локальных наборов. */
@@ -28,6 +30,7 @@ internal fun MyDecksScreen(
     state: MyDecksUiState,
     onRetry: () -> Unit,
     onOpenDeck: (LocalDeckId) -> Unit,
+    onCreateDeck: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -40,6 +43,13 @@ internal fun MyDecksScreen(
                 text = stringResource(R.string.my_decks_title),
                 modifier = Modifier.semantics { heading() },
                 style = MaterialTheme.typography.headlineSmall,
+            )
+        }
+        item {
+            ZapomniButton(
+                label = stringResource(R.string.create_deck),
+                onClick = onCreateDeck,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
         when (state) {

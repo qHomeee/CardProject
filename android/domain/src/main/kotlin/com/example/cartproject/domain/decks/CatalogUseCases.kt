@@ -21,6 +21,10 @@ class ReadDeck(private val local: LocalDeckStore, private val catalog: CatalogRe
     /** Читает свежую версию набора из каталога. */
     suspend operator fun invoke(id: CatalogDeckId): Outcome<CatalogDeckContent> =
         catalog.readDeck(id)
+
+    /** Находит сохранённый снимок по ID набора в каталоге. */
+    suspend fun findDownloadedCopy(id: CatalogDeckId): Outcome<LocalDeckId?> =
+        local.findDownloadedDeck(id)
 }
 
 /** Проверяет серверный набор и передаёт его для атомарного сохранения. */

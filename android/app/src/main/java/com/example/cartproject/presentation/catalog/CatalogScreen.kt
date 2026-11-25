@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.cartproject.R
 import com.example.cartproject.domain.AppError
+import com.example.cartproject.domain.decks.CatalogDeckId
 import com.example.cartproject.domain.decks.CatalogDeckSummary
 import com.example.cartproject.domain.decks.MaterialIssue
 import com.example.cartproject.presentation.components.DeckCard
@@ -44,6 +45,7 @@ internal fun CatalogScreen(
     onQueryChange: (String) -> Unit,
     onRetry: () -> Unit,
     onOpenDecks: () -> Unit,
+    onOpenDeck: (CatalogDeckId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val defaultQuery = state.query.isBlank()
@@ -82,7 +84,7 @@ internal fun CatalogScreen(
                     )
                 }
                 items(decks, key = { it.id.value.toString() }) { deck ->
-                    CatalogDeckCard(deck)
+                    CatalogDeckCard(deck) { onOpenDeck(deck.id) }
                 }
             } else if (result !is CatalogResult.InvalidQuery) {
                 item("status") {
@@ -150,14 +152,14 @@ private fun CatalogIntroduction() {
 }
 
 @Composable
-private fun CatalogDeckCard(deck: CatalogDeckSummary) {
-    val count = stringResource(R.string.catalog_card_count, deck.cardCount)
+private fun CatalogDeckCard(deck: CatalogDeckSummary, onClick: () -> Unit) {
+    val count = stringResource(R.string.deck_card_count, deck.cardCount)
     val details = if (deck.description.isBlank()) {
         count
     } else {
         stringResource(R.string.catalog_deck_details, count, deck.description)
     }
-    DeckCard(title = deck.title, details = details, origin = DeckCardOrigin.Catalog)
+    DeckCard(deck.title, DeckCardOrigin.Catalog, details = details, onClick = onClick)
 }
 
 @Composable

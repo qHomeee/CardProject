@@ -14,6 +14,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.example.cartproject.R
 import com.example.cartproject.domain.decks.DeckOrigin
+import com.example.cartproject.domain.decks.LocalDeckId
 import com.example.cartproject.presentation.components.DeckCard
 import com.example.cartproject.presentation.components.DeckCardOrigin
 import com.example.cartproject.presentation.components.StatusAction
@@ -26,6 +27,7 @@ import com.example.cartproject.presentation.theme.ZapomniSize
 internal fun MyDecksScreen(
     state: MyDecksUiState,
     onRetry: () -> Unit,
+    onOpenDeck: (LocalDeckId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -61,6 +63,7 @@ internal fun MyDecksScreen(
                         DeckCard(
                             title = deck.title,
                             details = deck.description,
+                            onClick = { onOpenDeck(deck.id) },
                             origin = when (deck.origin) {
                                 DeckOrigin.Owned -> DeckCardOrigin.Owned
                                 is DeckOrigin.Downloaded -> DeckCardOrigin.Downloaded

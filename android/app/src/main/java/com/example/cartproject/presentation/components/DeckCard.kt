@@ -6,15 +6,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.example.cartproject.R
 import com.example.cartproject.presentation.theme.ZapomniSize
@@ -42,7 +47,13 @@ internal fun DeckCard(
 
     Surface(
         modifier = modifier.fillMaxWidth().clip(shape).then(
-            if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
+            if (onClick !=
+                null
+            ) {
+                Modifier.clickable(role = Role.Button, onClick = onClick)
+            } else {
+                Modifier
+            },
         ),
         shape = shape,
         color = palette.surface,
@@ -66,13 +77,30 @@ internal fun DeckCard(
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            if (!details.isNullOrBlank()) {
-                Text(
-                    details,
-                    color = palette.textMuted,
-                    style = MaterialTheme.typography.bodySmall,
-                )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(ZapomniSize.space8),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(ZapomniSize.space8),
+                ) {
+                    Text(title, style = MaterialTheme.typography.titleMedium)
+                    if (!details.isNullOrBlank()) {
+                        Text(
+                            details,
+                            color = palette.textMuted,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                }
+                if (onClick != null) {
+                    Icon(
+                        painterResource(R.drawable.ic_chevron_right),
+                        contentDescription = null,
+                        tint = palette.textMuted,
+                    )
+                }
             }
         }
     }

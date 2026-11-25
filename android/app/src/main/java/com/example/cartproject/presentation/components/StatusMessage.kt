@@ -29,6 +29,7 @@ internal enum class StatusKind(@get:DrawableRes val icon: Int?) {
     Empty(R.drawable.ic_status_empty),
     Offline(R.drawable.ic_status_offline),
     Error(R.drawable.ic_status_error),
+    Success(R.drawable.ic_status_success),
     GesturesUnavailable(R.drawable.ic_status_gesture),
 }
 
@@ -49,6 +50,7 @@ internal fun StatusMessage(
         StatusKind.Loading, StatusKind.Empty -> palette.surfaceRaised to palette.text
         StatusKind.Offline -> palette.warningSoft to palette.warning
         StatusKind.Error -> palette.dangerSoft to palette.danger
+        StatusKind.Success -> palette.successSoft to palette.success
         StatusKind.GesturesUnavailable -> palette.primarySoft to palette.onPrimarySoft
     }
 

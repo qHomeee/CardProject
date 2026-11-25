@@ -24,6 +24,7 @@ class CatalogScreenTest {
                 CatalogScreen(
                     state = CatalogUiState("", CatalogResult.Offline),
                     onQueryChange = {},
+                    onOpenDeck = {},
                     onRetry = { attempts++ },
                     onOpenDecks = { opened = true },
                 )
@@ -46,6 +47,7 @@ class CatalogScreenTest {
                 CatalogScreen(
                     state = CatalogUiState("Планеты", result.value),
                     onQueryChange = {},
+                    onOpenDeck = {},
                     onRetry = { result.value = CatalogResult.Content(emptyList()) },
                     onOpenDecks = {},
                 )

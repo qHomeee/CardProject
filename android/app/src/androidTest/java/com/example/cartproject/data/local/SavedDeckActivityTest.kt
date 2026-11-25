@@ -5,16 +5,19 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cartproject.MainActivity
 import com.example.cartproject.domain.Outcome
 import com.example.cartproject.domain.decks.DeleteOwnMaterial
+import com.example.cartproject.domain.decks.SaveOwnCard
 import com.example.cartproject.domain.decks.SaveOwnDeck
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,12 +35,20 @@ class SavedDeckActivityTest {
         val koin = GlobalContext.get()
         val save = koin.get<SaveOwnDeck>()
         val delete = koin.get<DeleteOwnMaterial>()
+        val saveCard = koin.get<SaveOwnCard>()
         val title = "Офлайн набор ${UUID.randomUUID().toString().take(6)}"
         val id = runBlocking { (save(null, title, "Проверка Room") as Outcome.Success).value }
         try {
+            val savedCard = runBlocking { saveCard(id, null, "Столица Португалии?", "Лиссабон") }
+            assertTrue(savedCard is Outcome.Success)
             rule.onNode(hasText("Мои наборы") and isSelectable()).performClick()
             waitForTitle(title)
+            rule.onNodeWithText(title).performClick()
+            waitForTitle("Лиссабон")
             rule.activityRule.scenario.recreate()
+            waitForTitle("Столица Португалии?")
+            waitForTitle("Лиссабон")
+            rule.onNodeWithContentDescription("Назад").performClick()
             waitForTitle(title)
         } finally {
             runBlocking { assertEquals(Outcome.Success(Unit), delete.deck(id)) }

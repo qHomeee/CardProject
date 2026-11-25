@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,6 +26,7 @@ internal fun StudyCard(
     total: Int,
     modifier: Modifier = Modifier,
     answer: String? = null,
+    hint: String? = null,
 ) {
     val palette = ZapomniTheme.colors
     val type = MaterialTheme.typography
@@ -48,13 +48,22 @@ internal fun StudyCard(
             )
             Text(question, modifier = Modifier.semantics { heading() }, style = type.headlineSmall)
             if (answer != null) {
-                HorizontalDivider(color = palette.border)
-                Text(
-                    stringResource(R.string.study_answer),
-                    color = palette.onPrimarySoft,
-                    style = type.labelLarge,
-                )
-                Text(answer, style = type.bodyLarge)
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = palette.primarySoft,
+                    contentColor = palette.onPrimarySoft,
+                    shape = MaterialTheme.shapes.small,
+                ) {
+                    Column(
+                        modifier = Modifier.padding(ZapomniSize.space12),
+                        verticalArrangement = Arrangement.spacedBy(ZapomniSize.space4),
+                    ) {
+                        Text(stringResource(R.string.study_answer), style = type.labelLarge)
+                        Text(answer, style = type.bodyLarge)
+                    }
+                }
+            } else if (hint != null) {
+                Text(hint, color = palette.textMuted, style = type.bodyLarge)
             }
         }
     }

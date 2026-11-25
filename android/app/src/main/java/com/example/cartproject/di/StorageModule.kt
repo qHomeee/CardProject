@@ -13,6 +13,7 @@ import com.example.cartproject.domain.decks.RemoveDownloadedDeck
 import com.example.cartproject.domain.decks.SaveOwnCard
 import com.example.cartproject.domain.decks.SaveOwnDeck
 import com.example.cartproject.domain.settings.ObserveSettings
+import com.example.cartproject.domain.settings.SetStudyGestures
 import com.example.cartproject.domain.study.GradeCard
 import com.example.cartproject.domain.study.ReadStatistics
 import com.example.cartproject.domain.study.ReviewStore
@@ -39,4 +40,5 @@ internal val storageModule = module {
     factory { GradeCard(get()) }
     factory { ReadStatistics(get()) }
     factory { ObserveSettings(get()) }
+    factory { SetStudyGestures(get()) }
 }

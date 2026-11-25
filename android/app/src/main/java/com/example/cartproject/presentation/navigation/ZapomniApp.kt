@@ -46,6 +46,7 @@ import com.example.cartproject.presentation.decks.DeckDetailViewModel
 import com.example.cartproject.presentation.decks.DeckSource
 import com.example.cartproject.presentation.decks.MyDecksScreen
 import com.example.cartproject.presentation.decks.MyDecksViewModel
+import com.example.cartproject.presentation.study.GestureSettingsScreen
 import com.example.cartproject.presentation.theme.ZapomniSize
 import com.example.cartproject.presentation.theme.ZapomniTheme
 import java.util.UUID
@@ -148,7 +149,7 @@ internal fun ZapomniApp(catalog: CatalogViewModel, myDecks: MyDecksViewModel) {
                     },
                 )
             }
-            composable<SettingsRoute> { SettingsDestination() }
+            composable<SettingsRoute> { GestureSettingsScreen() }
             composable<CatalogDeckRoute> { deckEntry ->
                 val id = CatalogDeckId(UUID.fromString(deckEntry.toRoute<CatalogDeckRoute>().id))
                 DeckDetailDestination(
@@ -191,9 +192,15 @@ internal fun ZapomniApp(catalog: CatalogViewModel, myDecks: MyDecksViewModel) {
                             }
                         }
                     },
+                    onStartStudy = {
+                        if (navController.currentBackStackEntry == deckEntry) {
+                            navController.navigate(StudyRoute(id.value)) { launchSingleTop = true }
+                        }
+                    },
                 )
             }
             materialEditorDestinations(navController)
+            studyDestination(navController)
         }
     }
 }
@@ -205,6 +212,7 @@ private fun DeckDetailDestination(
     onOpenCopy: (LocalDeckId) -> Unit = {},
     onEdit: (() -> Unit)? = null,
     onAddCard: (() -> Unit)? = null,
+    onStartStudy: (() -> Unit)? = null,
 ) {
     val viewModel = koinViewModel<DeckDetailViewModel> { parametersOf(source) }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -226,18 +234,6 @@ private fun DeckDetailDestination(
         onRemoveCopy = viewModel::removeSavedCopy,
         onEdit = onEdit,
         onAddCard = onAddCard,
+        onStartStudy = onStartStudy,
     )
-}
-
-@Composable
-private fun SettingsDestination() {
-    Column(
-        modifier = Modifier.padding(ZapomniSize.space16),
-    ) {
-        Text(
-            text = stringResource(R.string.tab_settings),
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.semantics { heading() },
-        )
-    }
 }

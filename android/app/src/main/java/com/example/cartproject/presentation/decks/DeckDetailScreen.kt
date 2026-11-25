@@ -50,6 +50,7 @@ internal fun DeckDetailScreen(
     onRemoveCopy: () -> Unit,
     onEdit: (() -> Unit)?,
     onAddCard: (() -> Unit)?,
+    onStartStudy: (() -> Unit)?,
 ) {
     var confirmRemoval by rememberSaveable { mutableStateOf(false) }
     val detail = (state.result as? Outcome.Success)?.value
@@ -123,10 +124,23 @@ internal fun DeckDetailScreen(
                     }
                 }
             }
+            val canStudy = onStartStudy != null && detail?.cards?.isNotEmpty() == true
+            if (canStudy) {
+                ZapomniButton(
+                    label = stringResource(R.string.study_start),
+                    onClick = onStartStudy,
+                    modifier = Modifier.fillMaxWidth().padding(
+                        start = ZapomniSize.space16,
+                        end = ZapomniSize.space16,
+                        bottom = ZapomniSize.space8,
+                    ),
+                )
+            }
             if (detail?.origin == DeckCardOrigin.Owned && onEdit != null) {
                 ZapomniButton(
                     label = stringResource(R.string.editor_edit_deck),
                     onClick = onEdit,
+                    secondary = canStudy,
                     modifier = Modifier.fillMaxWidth().padding(ZapomniSize.space16),
                 )
             } else {

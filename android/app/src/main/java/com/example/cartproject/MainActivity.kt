@@ -9,6 +9,8 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.example.cartproject.data.settings.StudyReminderController
 import com.example.cartproject.domain.Outcome
 import com.example.cartproject.domain.settings.ObserveSettings
 import com.example.cartproject.domain.settings.ThemePreference
@@ -17,6 +19,7 @@ import com.example.cartproject.presentation.catalog.CatalogViewModel
 import com.example.cartproject.presentation.decks.MyDecksViewModel
 import com.example.cartproject.presentation.navigation.ZapomniApp
 import com.example.cartproject.presentation.theme.ZapomniTheme
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,6 +28,12 @@ class MainActivity : ComponentActivity() {
     private val catalogViewModel: CatalogViewModel by viewModel()
     private val myDecksViewModel: MyDecksViewModel by viewModel()
     private val observeSettings: ObserveSettings by inject()
+    private val reminders: StudyReminderController by inject()
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch { reminders.restoreSchedule() }
+    }
 
     /** Применяет сохранённую тему и открывает граф навигации. */
     override fun onCreate(savedInstanceState: Bundle?) {

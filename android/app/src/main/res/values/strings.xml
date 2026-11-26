@@ -128,4 +128,12 @@
     <string name="reminder_channel">Повторение карточек</string>
     <string name="reminder_notification_title">Пора повторить карточки</string>
     <string name="reminder_notification_body">У тебя есть карточки, готовые к повторению.</string>
+    <string name="reminder_settings_heading">Напоминания</string>
+    <string name="reminder_settings_label">Напоминать о повторении</string>
+    <string name="reminder_settings_time">Время напоминания · %1$s</string>
+    <string name="reminder_settings_permission_denied">Уведомления отключены в Android</string>
+    <string name="reminder_settings_open_android">Открыть настройки уведомлений</string>
+    <string name="reminder_settings_read_error">Не удалось прочитать настройки напоминаний</string>
+    <string name="reminder_settings_write_error">Не удалось сохранить напоминание</string>
+    <string name="reminder_settings_schedule_error">Не удалось обновить расписание напоминаний</string>
 </resources>

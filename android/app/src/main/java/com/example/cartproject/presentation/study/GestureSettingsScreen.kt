@@ -20,10 +20,11 @@ import com.example.cartproject.presentation.components.StatusAction
 import com.example.cartproject.presentation.components.StatusKind
 import com.example.cartproject.presentation.components.StatusMessage
 import com.example.cartproject.presentation.components.ZapomniSwitch
+import com.example.cartproject.presentation.settings.ReminderSettings
 import com.example.cartproject.presentation.theme.ZapomniSize
 import org.koin.compose.viewmodel.koinViewModel
 
-/** Показывает сохраняемый переключатель управления жестами. */
+/** Показывает настройки жестов и напоминаний о повторении. */
 @Composable
 internal fun GestureSettingsScreen() {
     val viewModel = koinViewModel<GestureSettingsViewModel>()
@@ -55,5 +56,6 @@ internal fun GestureSettingsScreen() {
         if (state.writeFailed) {
             StatusMessage(StatusKind.Error, stringResource(R.string.gesture_settings_write_error))
         }
+        ReminderSettings()
     }
 }

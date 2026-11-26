@@ -31,7 +31,7 @@ class ObserveStudyGesturesTest {
                 }
             }
         }
-        val signals = useCase()
+        val signals = useCase { StudyGestureMode.Reveal }
         assertFalse(opened)
         val collected = signals.take(2).toList()
         assertTrue(opened)
@@ -43,6 +43,7 @@ class ObserveStudyGesturesTest {
     @Test
     fun observesUnavailableSensor() = runTest {
         val unavailable = StudyGestureSignal.Availability(GestureAvailability.SensorUnavailable)
-        assertEquals(unavailable, ObserveStudyGestures { flowOf(unavailable) }().first())
+        val useCase = ObserveStudyGestures { flowOf(unavailable) }
+        assertEquals(unavailable, useCase { StudyGestureMode.Reveal }.first())
     }
 }

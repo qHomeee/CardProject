@@ -22,6 +22,7 @@ class StudyGestureDetector {
     private var candidate = Pose.Other
     private var since = 0L
     private var previousSampleAt: Long? = null
+    private var previousMode: StudyGestureMode? = null
 
     /** Сбрасывает незавершённый жест при смене ориентации экрана. */
     fun reset() {
@@ -29,19 +30,21 @@ class StudyGestureDetector {
         candidate = Pose.Other
         since = 0L
         previousSampleAt = null
+        previousMode = null
     }
 
     /** Принимает очередное измерение и возвращает распознанное действие, если оно есть. */
-    fun accept(sample: StudyPoseSample): Action? {
+    fun accept(sample: StudyPoseSample, mode: StudyGestureMode): Action? {
         val previous = previousSampleAt
-        if (previous != null &&
+        val interrupted = previous != null &&
             (sample.atMillis < previous || sample.atMillis - previous > MAX_SAMPLE_GAP_MILLIS)
-        ) {
+        if (previousMode != mode || interrupted) {
             reset()
         }
+        previousMode = mode
         previousSampleAt = sample.atMillis
 
-        val pose = classify(sample)
+        val pose = classify(sample, mode)
         if (pose != candidate) {
             candidate = pose
             since = sample.atMillis
@@ -69,17 +72,17 @@ class StudyGestureDetector {
         return action
     }
 
-    private fun classify(sample: StudyPoseSample): Pose {
+    private fun classify(sample: StudyPoseSample, mode: StudyGestureMode): Pose {
         val (x, y, z) = sample
         val magnitude = sqrt(x * x + y * y + z * z)
         if (magnitude !in 6f..13f) return Pose.Other
         val across = x / magnitude
         val up = z / magnitude
         return when {
-            up <= -0.80f -> Pose.Down
             up >= 0.80f && abs(across) <= 0.25f -> Pose.Neutral
-            up >= 0.40f && across <= -0.50f -> Pose.Right
-            up >= 0.40f && across >= 0.50f -> Pose.Left
+            mode == StudyGestureMode.Reveal && up <= -0.80f -> Pose.Down
+            mode == StudyGestureMode.Grade && up >= 0.40f && across <= -0.50f -> Pose.Right
+            mode == StudyGestureMode.Grade && up >= 0.40f && across >= 0.50f -> Pose.Left
             else -> Pose.Other
         }
     }

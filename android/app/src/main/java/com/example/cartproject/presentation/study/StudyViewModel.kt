@@ -11,6 +11,7 @@ import com.example.cartproject.domain.study.GradeCard
 import com.example.cartproject.domain.study.ObserveStudyGestures
 import com.example.cartproject.domain.study.ReviewGrade
 import com.example.cartproject.domain.study.StartStudy
+import com.example.cartproject.domain.study.StudyGestureMode
 import com.example.cartproject.domain.study.StudyGestureSignal
 import com.example.cartproject.domain.study.StudySession
 import com.example.cartproject.domain.study.StudySessionId
@@ -87,7 +88,7 @@ internal class StudyViewModel(
                             .distinctUntilChanged()
                             .flatMapLatest { enabled ->
                                 if (enabled) {
-                                    observeGestures()
+                                    observeGestures(::gestureMode)
                                 } else {
                                     flowOf(
                                         StudyGestureSignal.Availability(
@@ -153,6 +154,13 @@ internal class StudyViewModel(
         val current = state.value as? StudyUiState.Active ?: return
         if (!current.saving) state.value = current.copy(confirmExit = visible)
     }
+
+    private fun gestureMode(): StudyGestureMode =
+        if ((state.value as? StudyUiState.Active)?.answered == true) {
+            StudyGestureMode.Grade
+        } else {
+            StudyGestureMode.Reveal
+        }
 
     private fun onGestureSignal(signal: StudyGestureSignal) {
         if (!foreground.value) return

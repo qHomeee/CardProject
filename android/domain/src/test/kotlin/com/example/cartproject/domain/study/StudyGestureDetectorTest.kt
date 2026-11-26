@@ -8,6 +8,7 @@ import org.junit.Test
 class StudyGestureDetectorTest {
     private val sensor = StudyGestureDetector()
     private var time = 0L
+    private var mode = StudyGestureMode.Reveal
 
     @Test
     fun revealRequiresACompleteFlip() {
@@ -21,6 +22,7 @@ class StudyGestureDetectorTest {
 
     @Test
     fun heldTiltGradesOnlyOnceUntilNeutral() {
+        mode = StudyGestureMode.Grade
         assertNull(hold(x = -6f, z = 7.8f))
         assertNull(hold())
         assertEquals(Action.Remembered, hold(x = -6f, z = 7.8f))
@@ -42,8 +44,9 @@ class StudyGestureDetectorTest {
 
     @Test
     fun unstableTiltAndShakingDoNotCount() {
+        mode = StudyGestureMode.Grade
         hold()
-        assertNull(sensor.accept(StudyPoseSample(-6f, 0f, 7.8f, time)))
+        assertNull(sensor.accept(StudyPoseSample(-6f, 0f, 7.8f, time), mode))
         time += 50
         assertNull(hold(x = -17f, z = 19f))
         assertNull(hold())
@@ -53,8 +56,9 @@ class StudyGestureDetectorTest {
 
     @Test
     fun isolatedTiltDoesNotUseTimeBetweenPacketsAsAHold() {
+        mode = StudyGestureMode.Grade
         hold()
-        assertNull(sensor.accept(StudyPoseSample(-6f, 0f, 7.8f, time)))
+        assertNull(sensor.accept(StudyPoseSample(-6f, 0f, 7.8f, time), mode))
         time += 500
         assertNull(hold(x = -6f, z = 7.8f))
         assertNull(hold())
@@ -71,9 +75,27 @@ class StudyGestureDetectorTest {
         assertEquals(Action.Reveal, hold())
     }
 
+    @Test
+    fun flipThroughTheSideAngleDoesNotDisarmReveal() {
+        hold()
+        assertNull(hold(x = -6f, z = 7.8f))
+        assertNull(hold(z = -9.8f))
+        assertNull(hold(x = 6f, z = 7.8f))
+        assertEquals(Action.Reveal, hold())
+    }
+
+    @Test
+    fun switchingToGradeRequiresANewNeutral() {
+        hold()
+        mode = StudyGestureMode.Grade
+        assertNull(hold(x = 6f, z = 7.8f))
+        assertNull(hold())
+        assertEquals(Action.NeedsReview, hold(x = 6f, z = 7.8f))
+    }
+
     private fun hold(x: Float = 0f, z: Float = 9.8f): Action? {
-        sensor.accept(StudyPoseSample(x, 0f, z, time))
+        sensor.accept(StudyPoseSample(x, 0f, z, time), mode)
         time += 220
-        return sensor.accept(StudyPoseSample(x, 0f, z, time++))
+        return sensor.accept(StudyPoseSample(x, 0f, z, time++), mode)
     }
 }

@@ -16,14 +16,18 @@ sealed interface StudyGestureSignal {
     enum class Action : StudyGestureSignal { Reveal, Remembered, NeedsReview }
 }
 
+/** Определяет, какое движение разрешено на текущей карточке. */
+enum class StudyGestureMode { Reveal, Grade }
+
 /** Источник событий, освобождающий датчик при отмене подписки. */
 fun interface GestureSource {
     /** Начинает получение событий при подписке на поток. */
-    fun events(): Flow<StudyGestureSignal>
+    fun events(mode: () -> StudyGestureMode): Flow<StudyGestureSignal>
 }
 
 /** Предоставляет события жестов на время активной подписки. */
 class ObserveStudyGestures(private val source: GestureSource) {
     /** Запрашивает события при сборе потока и передаёт ему отмену подписки. */
-    operator fun invoke(): Flow<StudyGestureSignal> = flow { emitAll(source.events()) }
+    operator fun invoke(mode: () -> StudyGestureMode): Flow<StudyGestureSignal> =
+        flow { emitAll(source.events(mode)) }
 }

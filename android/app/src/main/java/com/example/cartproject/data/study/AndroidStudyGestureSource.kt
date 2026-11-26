@@ -10,6 +10,7 @@ import android.view.Surface
 import com.example.cartproject.domain.study.GestureAvailability
 import com.example.cartproject.domain.study.GestureSource
 import com.example.cartproject.domain.study.StudyGestureDetector
+import com.example.cartproject.domain.study.StudyGestureMode
 import com.example.cartproject.domain.study.StudyGestureSignal
 import com.example.cartproject.domain.study.StudyPoseSample
 import kotlinx.coroutines.channels.awaitClose
@@ -21,7 +22,7 @@ internal class AndroidStudyGestureSource(
     private val sensors: SensorManager,
     private val displays: DisplayManager,
 ) : GestureSource {
-    override fun events(): Flow<StudyGestureSignal> = callbackFlow {
+    override fun events(mode: () -> StudyGestureMode): Flow<StudyGestureSignal> = callbackFlow {
         val detector = StudyGestureDetector()
         val display = displays.getDisplay(Display.DEFAULT_DISPLAY)
         var rotation = Surface.ROTATION_0
@@ -41,7 +42,7 @@ internal class AndroidStudyGestureSource(
                     detector.reset()
                 }
                 val pose = screenPose(filtered, rotation, event.timestamp / 1_000_000)
-                detector.accept(pose)?.let { trySend(it) }
+                detector.accept(pose, mode())?.let { trySend(it) }
             }
 
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit

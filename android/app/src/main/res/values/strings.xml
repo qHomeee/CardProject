@@ -119,7 +119,7 @@
     <string name="study_gestures_enable_help">Продолжайте кнопками. Жесты можно включить в настройках.</string>
     <string name="study_sensor_unavailable">Датчик движения недоступен</string>
     <string name="study_use_buttons">Продолжайте занятие кнопками.</string>
-    <string name="study_gesture_turn">Держите телефон перед собой. Разверните экран от себя и верните обратно, чтобы открыть ответ.</string>
+    <string name="study_gesture_turn">Держите телефон как удобно. Поверните экран от себя и верните обратно, чтобы открыть ответ.</string>
     <string name="study_gesture_flip">Держите телефон горизонтально экраном вверх. Переверните экраном к полу, ненадолго задержите и верните обратно.</string>
     <string name="study_gesture_grade">Опустите правый край телефона для «Вспомнил» или левый для «Нужно повторить». Затем верните экран вверх.</string>
     <string name="gesture_settings_label">Управление жестами</string>

@@ -38,12 +38,15 @@ internal class AndroidStudyGestureSource(
             override fun onSensorChanged(event: SensorEvent) {
                 val currentRotation = display?.rotation ?: Surface.ROTATION_0
                 val currentMode = mode()
-                if (currentRotation != rotation || currentMode != lastMode) {
-                    rotation = currentRotation
+                if (currentMode != lastMode) {
                     lastMode = currentMode
                     revealSent = false
                     detector.reset()
                     turn.reset()
+                }
+                if (currentRotation != rotation) {
+                    rotation = currentRotation
+                    detector.reset()
                 }
                 val atMillis = event.timestamp / 1_000_000
                 val action = when (event.sensor.type) {

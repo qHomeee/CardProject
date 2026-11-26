@@ -10,22 +10,64 @@ class StudyTurnDetectorTest {
     private val toward = StudyScreenDirection(0f, 1f, 0f)
     private val away = StudyScreenDirection(0f, -1f, 0f)
     private val side = StudyScreenDirection(1f, 0f, 0f)
+    private val faceUp = StudyScreenDirection(0f, 0f, 1f)
 
     @Test
-    fun uprightTurnRevealsOnlyAfterTheScreenReturns() {
+    fun deliversOneRevealAfterTheScreenReturns() {
         assertFalse(hold(toward))
         assertFalse(hold(side))
-        assertFalse(hold(away))
-        assertFalse(hold(away))
+        assertFalse(hold(away, duration = 650))
         assertTrue(hold(toward))
         assertFalse(hold(toward))
     }
 
     @Test
-    fun changesOfDirectionBelowAHalfTurnDoNotReveal() {
+    fun turnsFromVerticalHorizontalAndInclinedStartingPositions() {
+        val starts = listOf(
+            toward,
+            faceUp,
+            StudyScreenDirection(0.62f, 0.48f, 0.62f),
+            StudyScreenDirection(-0.34f, 0.83f, -0.44f),
+        )
+        for (start in starts) {
+            assertFalse(hold(start))
+            assertFalse(hold(StudyScreenDirection(-start.x, -start.y, -start.z)))
+            assertTrue(hold(start))
+        }
+    }
+
+    @Test
+    fun adaptsToSteadyNewGripBeforeTheTurn() {
+        assertFalse(hold(faceUp))
+        assertFalse(hold(toward, duration = 550))
+        assertFalse(hold(away))
+        assertTrue(hold(toward))
+    }
+
+    @Test
+    fun halfTurnWorksAtTheSameComfortablePitch() {
+        val towardAtPitch = StudyScreenDirection(0f, 0.866f, 0.50f)
+        val awayAtPitch = StudyScreenDirection(0f, -0.80f, 0.60f)
+        assertFalse(hold(towardAtPitch))
+        assertFalse(hold(awayAtPitch))
+        assertTrue(hold(StudyScreenDirection(0f, 0.75f, 0.66f)))
+    }
+
+    @Test
+    fun quarterTurnAndSmallChangesInPitchDoNotReveal() {
         hold(toward)
         assertFalse(hold(side))
+        assertFalse(hold(StudyScreenDirection(0f, 0.80f, 0.60f)))
+        assertFalse(hold(StudyScreenDirection(0f, 0.94f, -0.34f)))
         assertFalse(hold(toward))
+    }
+
+    @Test
+    fun spinningAFaceUpPhoneDoesNotReveal() {
+        val slightlyInclined = StudyScreenDirection(0.15f, 0f, 0.988f)
+        hold(slightlyInclined)
+        assertFalse(hold(StudyScreenDirection(-0.15f, 0f, 0.988f)))
+        assertFalse(hold(slightlyInclined))
     }
 
     @Test
@@ -33,14 +75,6 @@ class StudyTurnDetectorTest {
         hold(toward)
         hold(away)
         clock += 500
-        assertFalse(hold(toward))
-        assertFalse(hold(away))
-        assertTrue(hold(toward))
-    }
-
-    @Test
-    fun puttingThePhoneOnATableDoesNotSetAnUprightReference() {
-        assertFalse(hold(StudyScreenDirection(0f, 0f, 1f)))
         assertFalse(hold(toward))
         assertFalse(hold(away))
         assertTrue(hold(toward))
@@ -55,26 +89,16 @@ class StudyTurnDetectorTest {
         assertTrue(detector.accept(toward, clock + 60))
     }
 
-    @Test
-    fun halfTurnWorksAtTheSameComfortablePitch() {
-        val towardAtPitch = StudyScreenDirection(0f, 0.866f, 0.50f)
-        val awayAtPitch = StudyScreenDirection(0f, -0.80f, 0.60f)
-        assertFalse(hold(towardAtPitch))
-        assertFalse(hold(awayAtPitch))
-        assertTrue(hold(towardAtPitch))
-    }
-
-    @Test
-    fun changingPitchWhileFacingTheSameDirectionDoesNotReveal() {
-        hold(toward)
-        assertFalse(hold(StudyScreenDirection(0f, 0.80f, 0.60f)))
-        assertFalse(hold(StudyScreenDirection(0f, 0.94f, -0.34f)))
-        assertFalse(hold(toward))
-    }
-
-    private fun hold(direction: StudyScreenDirection): Boolean {
-        detector.accept(direction, clock)
-        clock += 210
-        return detector.accept(direction, clock++)
+    private fun hold(direction: StudyScreenDirection, duration: Long = 210): Boolean {
+        var recognized = detector.accept(direction, clock)
+        var elapsed = 0L
+        while (elapsed < duration) {
+            val step = minOf(30, duration - elapsed)
+            elapsed += step
+            clock += step
+            recognized = detector.accept(direction, clock) || recognized
+        }
+        clock++
+        return recognized
     }
 }

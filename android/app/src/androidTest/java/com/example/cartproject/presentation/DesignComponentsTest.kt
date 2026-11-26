@@ -2,11 +2,15 @@ package com.example.cartproject.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
@@ -20,6 +24,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cartproject.presentation.components.StudyCard
 import com.example.cartproject.presentation.components.ZapomniButton
@@ -29,6 +35,7 @@ import com.example.cartproject.presentation.components.ZapomniTab
 import com.example.cartproject.presentation.components.ZapomniTextField
 import com.example.cartproject.presentation.theme.ZapomniTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -97,6 +104,31 @@ class DesignComponentsTest {
 
         composeRule.onNodeWithText("Жесты").assertIsOff().performClick().assertIsOn()
         composeRule.onNodeWithText("Мои наборы").assertIsSelected()
+        composeRule.onNodeWithText("Настройки").performClick().assertIsSelected()
+    }
+
+    /** При 200% вкладки остаются отдельными кнопками в одном ряду. */
+    @Test
+    fun keepsTabsInOneRowAtLargeFontScale() {
+        val selected = mutableStateOf(ZapomniTab.Catalog)
+        composeRule.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(
+                LocalDensity provides Density(density.density, fontScale = 2f),
+            ) {
+                ZapomniTheme {
+                    ZapomniNavigationBar(selected.value, {
+                        selected.value = it
+                    }, Modifier.width(344.dp))
+                }
+            }
+        }
+
+        val tabs = listOf("Каталог", "Мои наборы", "Настройки").map {
+            composeRule.onNodeWithText(it).assertHasClickAction().fetchSemanticsNode().boundsInRoot
+        }
+        assertTrue(tabs.zipWithNext().all { (left, right) -> left.right <= right.left })
+        assertTrue(tabs.maxOf { it.top } < tabs.minOf { it.bottom })
         composeRule.onNodeWithText("Настройки").performClick().assertIsSelected()
     }
 

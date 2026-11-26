@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -22,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -49,9 +47,8 @@ internal fun ZapomniNavigationBar(
 ) {
     val palette = ZapomniTheme.colors
     val shape = MaterialTheme.shapes.medium
-    val largeText = LocalDensity.current.fontScale >= 1.5f
 
-    FlowRow(
+    Row(
         modifier = modifier
             .clip(shape)
             .background(palette.surface)
@@ -59,14 +56,12 @@ internal fun ZapomniNavigationBar(
             .selectableGroup()
             .heightIn(min = 74.dp)
             .padding(ZapomniSize.space4),
-        verticalArrangement = Arrangement.spacedBy(ZapomniSize.space4, Alignment.CenterVertically),
-        maxItemsInEachRow = if (largeText) 1 else ZapomniTab.entries.size,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         for (tab in ZapomniTab.entries) {
             NavigationTab(
                 tab = tab,
                 active = tab == selected,
-                horizontal = largeText,
                 onClick = { onSelect(tab) },
                 modifier = Modifier.weight(1f),
             )
@@ -78,17 +73,19 @@ internal fun ZapomniNavigationBar(
 private fun NavigationTab(
     tab: ZapomniTab,
     active: Boolean,
-    horizontal: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val palette = ZapomniTheme.colors
     val color = if (active) palette.onPrimarySoft else palette.textMuted
-    val itemModifier = modifier
-        .heightIn(min = ZapomniSize.touchTarget)
-        .selectable(selected = active, role = Role.Tab, onClick = onClick)
-        .padding(ZapomniSize.space4)
-    val icon: @Composable () -> Unit = {
+    Column(
+        modifier = modifier
+            .heightIn(min = ZapomniSize.touchTarget)
+            .selectable(selected = active, role = Role.Tab, onClick = onClick)
+            .padding(ZapomniSize.space4),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(ZapomniSize.space4, Alignment.CenterVertically),
+    ) {
         Box(
             modifier = Modifier.size(width = 56.dp, height = 30.dp)
                 .background(
@@ -104,37 +101,12 @@ private fun NavigationTab(
                 tint = color,
             )
         }
-    }
-    val label: @Composable () -> Unit = {
         Text(
             text = stringResource(tab.title),
             color = color,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium,
-            textAlign = if (horizontal) TextAlign.Start else TextAlign.Center,
+            textAlign = TextAlign.Center,
         )
-    }
-
-    if (horizontal) {
-        Row(
-            modifier = itemModifier,
-            horizontalArrangement = Arrangement.spacedBy(ZapomniSize.space8),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            icon()
-            label()
-        }
-    } else {
-        Column(
-            modifier = itemModifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                ZapomniSize.space4,
-                Alignment.CenterVertically,
-            ),
-        ) {
-            icon()
-            label()
-        }
     }
 }

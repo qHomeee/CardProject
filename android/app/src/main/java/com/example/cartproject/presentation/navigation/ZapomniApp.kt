@@ -96,14 +96,18 @@ internal fun ZapomniApp(catalog: CatalogViewModel, myDecks: MyDecksViewModel) {
         }
     }
 
+    val density = LocalDensity.current
+    val largeText = density.fontScale >= 1.5f
+    val navigationWidth = if (largeText) 520.dp else 328.dp
+    val navigationMargin = if (largeText) ZapomniSize.space8 else ZapomniSize.space16
     Scaffold(
         containerColor = ZapomniTheme.colors.background,
         bottomBar = {
-            if (selected != null && WindowInsets.ime.getBottom(LocalDensity.current) == 0) {
+            if (selected != null && WindowInsets.ime.getBottom(density) == 0) {
                 Box(
                     modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(
-                        start = ZapomniSize.space16,
-                        end = ZapomniSize.space16,
+                        start = navigationMargin,
+                        end = navigationMargin,
                         bottom = ZapomniSize.space8,
                     ),
                     contentAlignment = Alignment.Center,
@@ -111,7 +115,7 @@ internal fun ZapomniApp(catalog: CatalogViewModel, myDecks: MyDecksViewModel) {
                     ZapomniNavigationBar(
                         selected = selected,
                         onSelect = startTab,
-                        modifier = Modifier.widthIn(max = 328.dp).fillMaxWidth(),
+                        modifier = Modifier.widthIn(max = navigationWidth).fillMaxWidth(),
                     )
                 }
             }

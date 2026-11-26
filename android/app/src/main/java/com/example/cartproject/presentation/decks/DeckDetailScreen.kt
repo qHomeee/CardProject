@@ -21,6 +21,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -54,6 +56,20 @@ internal fun DeckDetailScreen(
 ) {
     var confirmRemoval by rememberSaveable { mutableStateOf(false) }
     val detail = (state.result as? Outcome.Success)?.value
+    val scrollActions = LocalConfiguration.current.screenHeightDp < 480 ||
+        LocalDensity.current.fontScale >= 1.5f
+    val actions: @Composable (Modifier) -> Unit = { modifier ->
+        DeckControls(
+            state = state,
+            detail = detail,
+            onDownload = onDownload,
+            onOpenCopy = onOpenCopy,
+            onRemove = { confirmRemoval = true },
+            onEdit = onEdit,
+            onStartStudy = onStartStudy,
+            modifier = modifier,
+        )
+    }
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(Modifier.widthIn(max = 640.dp).fillMaxSize()) {
             SubscreenTopBar(R.string.deck_detail_title, onBack)
@@ -94,6 +110,9 @@ internal fun DeckDetailScreen(
                                 )
                             }
                         }
+                        if (scrollActions) {
+                            item { actions(Modifier.fillMaxWidth()) }
+                        }
                         if (deck.cards.isEmpty()) {
                             item {
                                 StatusMessage(
@@ -123,33 +142,17 @@ internal fun DeckDetailScreen(
                         }
                     }
                 }
+                if (scrollActions && detail == null && state.savedCopy != null) {
+                    item { actions(Modifier.fillMaxWidth()) }
+                }
             }
-            val canStudy = onStartStudy != null && detail?.cards?.isNotEmpty() == true
-            if (canStudy) {
-                ZapomniButton(
-                    label = stringResource(R.string.study_start),
-                    onClick = onStartStudy,
-                    modifier = Modifier.fillMaxWidth().padding(
+            if (!scrollActions && (detail != null || state.savedCopy != null)) {
+                actions(
+                    Modifier.fillMaxWidth().padding(
                         start = ZapomniSize.space16,
                         end = ZapomniSize.space16,
-                        bottom = ZapomniSize.space8,
+                        bottom = ZapomniSize.space16,
                     ),
-                )
-            }
-            if (detail?.origin == DeckCardOrigin.Owned && onEdit != null) {
-                ZapomniButton(
-                    label = stringResource(R.string.editor_edit_deck),
-                    onClick = onEdit,
-                    secondary = canStudy,
-                    modifier = Modifier.fillMaxWidth().padding(ZapomniSize.space16),
-                )
-            } else {
-                DeckDetailActions(
-                    state = state,
-                    origin = detail?.origin,
-                    onDownload = onDownload,
-                    onOpenCopy = onOpenCopy,
-                    onRemove = { confirmRemoval = true },
                 )
             }
         }
@@ -222,6 +225,39 @@ private fun QuestionAndAnswer(card: DeckDetailCard) {
 }
 
 @Composable
+private fun DeckControls(
+    state: DeckDetailUiState,
+    detail: DeckDetails?,
+    onDownload: () -> Unit,
+    onOpenCopy: (LocalDeckId) -> Unit,
+    onRemove: () -> Unit,
+    onEdit: (() -> Unit)?,
+    onStartStudy: (() -> Unit)?,
+    modifier: Modifier,
+) {
+    val canStudy = onStartStudy != null && detail?.cards?.isNotEmpty() == true
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(ZapomniSize.space8)) {
+        if (canStudy) {
+            ZapomniButton(
+                label = stringResource(R.string.study_start),
+                onClick = onStartStudy,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        if (detail?.origin == DeckCardOrigin.Owned && onEdit != null) {
+            ZapomniButton(
+                label = stringResource(R.string.editor_edit_deck),
+                onClick = onEdit,
+                secondary = canStudy,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        } else {
+            DeckDetailActions(state, detail?.origin, onDownload, onOpenCopy, onRemove)
+        }
+    }
+}
+
+@Composable
 private fun DeckDetailActions(
     state: DeckDetailUiState,
     origin: DeckCardOrigin?,
@@ -255,11 +291,7 @@ private fun DeckDetailActions(
         else -> return
     }
     Column(
-        modifier = Modifier.fillMaxWidth().padding(
-            start = ZapomniSize.space16,
-            end = ZapomniSize.space16,
-            bottom = ZapomniSize.space16,
-        ),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(ZapomniSize.space8),
     ) {
         if (failure != null) {

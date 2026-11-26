@@ -55,6 +55,23 @@ class StudyTurnDetectorTest {
         assertTrue(detector.accept(toward, clock + 60))
     }
 
+    @Test
+    fun halfTurnWorksAtTheSameComfortablePitch() {
+        val towardAtPitch = StudyScreenDirection(0f, 0.866f, 0.50f)
+        val awayAtPitch = StudyScreenDirection(0f, -0.80f, 0.60f)
+        assertFalse(hold(towardAtPitch))
+        assertFalse(hold(awayAtPitch))
+        assertTrue(hold(towardAtPitch))
+    }
+
+    @Test
+    fun changingPitchWhileFacingTheSameDirectionDoesNotReveal() {
+        hold(toward)
+        assertFalse(hold(StudyScreenDirection(0f, 0.80f, 0.60f)))
+        assertFalse(hold(StudyScreenDirection(0f, 0.94f, -0.34f)))
+        assertFalse(hold(toward))
+    }
+
     private fun hold(direction: StudyScreenDirection): Boolean {
         detector.accept(direction, clock)
         clock += 210

@@ -33,11 +33,13 @@ class StudyTurnDetector {
             settling = null
             return false
         }
-        val direction = StudyScreenDirection(raw.x / length, raw.y / length, raw.z / length)
-        if (abs(direction.z) > MAX_VERTICAL_COMPONENT) {
+        if (abs(raw.z) / length > MAX_VERTICAL_COMPONENT) {
             reset()
             return false
         }
+        // Сравниваем азимут экрана, сохраняя привычный наклон телефона в руке.
+        val horizontal = sqrt(raw.x * raw.x + raw.y * raw.y)
+        val direction = StudyScreenDirection(raw.x / horizontal, raw.y / horizontal, 0f)
         val last = lastSample
         if (last != null && (atMillis < last || atMillis - last > GESTURE_MAX_GAP_MILLIS)) reset()
         lastSample = atMillis

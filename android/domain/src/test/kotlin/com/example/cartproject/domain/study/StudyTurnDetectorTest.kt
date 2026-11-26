@@ -46,6 +46,15 @@ class StudyTurnDetectorTest {
         assertTrue(hold(toward))
     }
 
+    @Test
+    fun revealsAfterSixtyMillisecondsOnReturnFromAConfirmedTurn() {
+        hold(toward)
+        hold(away)
+        assertFalse(detector.accept(toward, clock))
+        assertFalse(detector.accept(toward, clock + 59))
+        assertTrue(detector.accept(toward, clock + 60))
+    }
+
     private fun hold(direction: StudyScreenDirection): Boolean {
         detector.accept(direction, clock)
         clock += 210

@@ -39,7 +39,7 @@ class StudyTurnDetector {
             return false
         }
         val last = lastSample
-        if (last != null && (atMillis < last || atMillis - last > MAX_GAP_MILLIS)) reset()
+        if (last != null && (atMillis < last || atMillis - last > GESTURE_MAX_GAP_MILLIS)) reset()
         lastSample = atMillis
 
         val initial = reference
@@ -54,7 +54,8 @@ class StudyTurnDetector {
             holdStarted = null
             return false
         }
-        if (!held(atMillis)) return false
+        val waitMillis = if (turnedAway) GESTURE_RETURN_MILLIS else GESTURE_HOLD_MILLIS
+        if (!held(atMillis, waitMillis)) return false
 
         if (turnedAway) {
             reset()
@@ -70,15 +71,15 @@ class StudyTurnDetector {
         if (candidate == null || candidate.dot(direction) < SETTLING_ALIGNMENT) {
             settling = direction
             holdStarted = atMillis
-        } else if (held(atMillis)) {
+        } else if (held(atMillis, GESTURE_HOLD_MILLIS)) {
             reference = candidate
             holdStarted = null
         }
     }
 
-    private fun held(atMillis: Long): Boolean {
+    private fun held(atMillis: Long, waitMillis: Long): Boolean {
         val since = holdStarted ?: atMillis.also { holdStarted = it }
-        return atMillis - since >= HOLD_MILLIS
+        return atMillis - since >= waitMillis
     }
 
     private companion object {
@@ -86,7 +87,5 @@ class StudyTurnDetector {
         const val SETTLING_ALIGNMENT = 0.98f
         const val AWAY_ALIGNMENT = -0.80f
         const val RETURN_ALIGNMENT = 0.80f
-        const val HOLD_MILLIS = 180L
-        const val MAX_GAP_MILLIS = 300L
     }
 }

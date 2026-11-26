@@ -21,18 +21,28 @@ class StudyGestureDetector {
     private var step = Step.NeedNeutral
     private var candidate = Pose.Other
     private var since = 0L
+    private var previousSampleAt: Long? = null
 
     /** Сбрасывает незавершённый жест при смене ориентации экрана. */
     fun reset() {
         step = Step.NeedNeutral
         candidate = Pose.Other
         since = 0L
+        previousSampleAt = null
     }
 
     /** Принимает очередное измерение и возвращает распознанное действие, если оно есть. */
     fun accept(sample: StudyPoseSample): Action? {
+        val previous = previousSampleAt
+        if (previous != null &&
+            (sample.atMillis < previous || sample.atMillis - previous > MAX_SAMPLE_GAP_MILLIS)
+        ) {
+            reset()
+        }
+        previousSampleAt = sample.atMillis
+
         val pose = classify(sample)
-        if (pose != candidate || sample.atMillis < since) {
+        if (pose != candidate) {
             candidate = pose
             since = sample.atMillis
         }
@@ -76,5 +86,6 @@ class StudyGestureDetector {
 
     private companion object {
         const val HOLD_MILLIS = 180L
+        const val MAX_SAMPLE_GAP_MILLIS = 300L
     }
 }

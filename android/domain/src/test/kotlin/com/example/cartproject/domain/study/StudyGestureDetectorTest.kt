@@ -51,6 +51,26 @@ class StudyGestureDetectorTest {
         assertEquals(Action.Remembered, hold(x = -6f, z = 7.8f))
     }
 
+    @Test
+    fun isolatedTiltDoesNotUseTimeBetweenPacketsAsAHold() {
+        hold()
+        assertNull(sensor.accept(StudyPoseSample(-6f, 0f, 7.8f, time)))
+        time += 500
+        assertNull(hold(x = -6f, z = 7.8f))
+        assertNull(hold())
+        assertEquals(Action.Remembered, hold(x = -6f, z = 7.8f))
+    }
+
+    @Test
+    fun streamGapDiscardsUnfinishedFlip() {
+        hold()
+        hold(z = -9.8f)
+        time += 500
+        assertNull(hold())
+        assertNull(hold(z = -9.8f))
+        assertEquals(Action.Reveal, hold())
+    }
+
     private fun hold(x: Float = 0f, z: Float = 9.8f): Action? {
         sensor.accept(StudyPoseSample(x, 0f, z, time))
         time += 220

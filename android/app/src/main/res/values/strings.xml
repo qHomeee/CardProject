@@ -123,8 +123,12 @@
     <string name="study_gesture_flip">Держите телефон горизонтально экраном вверх. Переверните экраном к полу, ненадолго задержите и верните обратно.</string>
     <string name="study_gesture_grade">Опустите правый край телефона для «Вспомнил» или левый для «Нужно повторить». Затем верните экран вверх.</string>
     <string name="gesture_settings_label">Управление жестами</string>
-    <string name="gesture_settings_read_error">Не удалось прочитать настройку жестов</string>
-    <string name="gesture_settings_write_error">Не удалось сохранить настройку жестов</string>
+    <string name="settings_read_error">Не удалось прочитать настройки</string>
+    <string name="settings_write_error">Не удалось сохранить настройки</string>
+    <string name="theme_settings_label">Тема · %1$s</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
     <string name="reminder_channel">Повторение карточек</string>
     <string name="reminder_notification_title">Пора повторить карточки</string>
     <string name="reminder_notification_body">У тебя есть карточки, готовые к повторению.</string>

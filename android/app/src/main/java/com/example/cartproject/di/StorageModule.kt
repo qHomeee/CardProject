@@ -14,6 +14,7 @@ import com.example.cartproject.domain.decks.SaveOwnCard
 import com.example.cartproject.domain.decks.SaveOwnDeck
 import com.example.cartproject.domain.settings.ObserveSettings
 import com.example.cartproject.domain.settings.SetStudyGestures
+import com.example.cartproject.domain.settings.SetThemePreference
 import com.example.cartproject.domain.settings.SettingsStore
 import com.example.cartproject.domain.study.GradeCard
 import com.example.cartproject.domain.study.ReadStatistics
@@ -42,4 +43,5 @@ internal val storageModule = module {
     factory { ReadStatistics(get()) }
     factory { ObserveSettings(get()) }
     factory { SetStudyGestures(get()) }
+    factory { SetThemePreference(get()) }
 }

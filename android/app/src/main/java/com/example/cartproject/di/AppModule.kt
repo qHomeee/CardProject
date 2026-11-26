@@ -15,7 +15,7 @@ import com.example.cartproject.presentation.decks.DeckDetailViewModel
 import com.example.cartproject.presentation.decks.MyDecksViewModel
 import com.example.cartproject.presentation.editor.MaterialEditorViewModel
 import com.example.cartproject.presentation.settings.ReminderSettingsViewModel
-import com.example.cartproject.presentation.study.GestureSettingsViewModel
+import com.example.cartproject.presentation.settings.SettingsViewModel
 import com.example.cartproject.presentation.study.StudyViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -35,7 +35,7 @@ internal val appModule = module {
         )
     }
     factory { ObserveStudyGestures(get()) }
-    viewModel { GestureSettingsViewModel(get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get()) }
     viewModel {
         val reminders = get<StudyReminderController>()
         ReminderSettingsViewModel(get(), get(), reminders::restoreSchedule)

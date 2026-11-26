@@ -6,6 +6,7 @@ import com.example.cartproject.domain.settings.ObserveSettings
 import com.example.cartproject.domain.settings.ReminderPreference
 import com.example.cartproject.domain.settings.ReminderStatus
 import com.example.cartproject.domain.settings.SettingsStore
+import com.example.cartproject.domain.settings.ThemePreference
 import com.example.cartproject.domain.settings.UpdateSettings
 import com.example.cartproject.domain.settings.UserSettings
 import java.time.LocalTime
@@ -126,6 +127,9 @@ class ReminderSettingsViewModelTest {
 
         override suspend fun saveGesturesEnabled(enabled: Boolean) =
             save(settings.copy(gesturesEnabled = enabled))
+
+        override suspend fun saveTheme(preference: ThemePreference) =
+            save(settings.copy(theme = preference))
 
         override suspend fun saveReminder(preference: ReminderPreference) =
             save(settings.copy(reminder = preference))

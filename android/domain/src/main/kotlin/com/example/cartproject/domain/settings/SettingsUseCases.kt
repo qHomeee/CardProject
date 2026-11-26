@@ -15,6 +15,9 @@ interface SettingsStore {
     /** Меняет только предпочтение жестов, сохраняя остальные поля. */
     suspend fun saveGesturesEnabled(enabled: Boolean): Outcome<Unit>
 
+    /** Меняет тему независимо от напоминаний и жестов. */
+    suspend fun saveTheme(preference: ThemePreference): Outcome<Unit>
+
     /** Меняет только напоминание, сохраняя жесты и тему. */
     suspend fun saveReminder(preference: ReminderPreference): Outcome<Unit>
 }
@@ -48,6 +51,13 @@ class SetStudyGestures(private val store: SettingsStore) {
     /** Записывает только выбранное значение переключателя. */
     suspend operator fun invoke(enabled: Boolean): Outcome<Unit> =
         store.saveGesturesEnabled(enabled)
+}
+
+/** Сохраняет выбор темы без изменения других настроек. */
+class SetThemePreference(private val store: SettingsStore) {
+    /** Записывает системную, светлую или тёмную тему. */
+    suspend operator fun invoke(preference: ThemePreference): Outcome<Unit> =
+        store.saveTheme(preference)
 }
 
 /** Сохраняет настройки и затем согласует напоминание. */

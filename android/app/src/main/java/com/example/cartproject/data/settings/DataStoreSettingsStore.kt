@@ -53,6 +53,9 @@ internal class DataStoreSettingsStore(private val preferences: DataStore<Prefere
         stored[Gestures] = enabled
     }
 
+    override suspend fun saveTheme(preference: ThemePreference): Outcome<Unit> =
+        write { it[Theme] = preference.name }
+
     override suspend fun saveReminder(preference: ReminderPreference): Outcome<Unit> =
         write { it.setReminder(preference) }
 

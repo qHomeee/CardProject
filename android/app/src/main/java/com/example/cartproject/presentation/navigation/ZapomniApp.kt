@@ -46,7 +46,7 @@ import com.example.cartproject.presentation.decks.DeckDetailViewModel
 import com.example.cartproject.presentation.decks.DeckSource
 import com.example.cartproject.presentation.decks.MyDecksScreen
 import com.example.cartproject.presentation.decks.MyDecksViewModel
-import com.example.cartproject.presentation.study.GestureSettingsScreen
+import com.example.cartproject.presentation.settings.SettingsScreen
 import com.example.cartproject.presentation.theme.ZapomniSize
 import com.example.cartproject.presentation.theme.ZapomniTheme
 import java.util.UUID
@@ -153,7 +153,7 @@ internal fun ZapomniApp(catalog: CatalogViewModel, myDecks: MyDecksViewModel) {
                     },
                 )
             }
-            composable<SettingsRoute> { GestureSettingsScreen() }
+            composable<SettingsRoute> { SettingsScreen() }
             composable<CatalogDeckRoute> { deckEntry ->
                 val id = CatalogDeckId(UUID.fromString(deckEntry.toRoute<CatalogDeckRoute>().id))
                 DeckDetailDestination(

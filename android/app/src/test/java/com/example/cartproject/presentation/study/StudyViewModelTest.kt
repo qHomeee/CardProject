@@ -9,6 +9,7 @@ import com.example.cartproject.domain.decks.LocalDeckId
 import com.example.cartproject.domain.settings.ObserveSettings
 import com.example.cartproject.domain.settings.ReminderPreference
 import com.example.cartproject.domain.settings.SettingsStore
+import com.example.cartproject.domain.settings.ThemePreference
 import com.example.cartproject.domain.settings.UserSettings
 import com.example.cartproject.domain.study.GestureAvailability
 import com.example.cartproject.domain.study.GestureSource
@@ -177,6 +178,9 @@ class StudyViewModelTest {
 
         override suspend fun saveGesturesEnabled(enabled: Boolean): Outcome<Unit> =
             save(state.value.copy(gesturesEnabled = enabled))
+
+        override suspend fun saveTheme(preference: ThemePreference): Outcome<Unit> =
+            save(state.value.copy(theme = preference))
 
         override suspend fun saveReminder(preference: ReminderPreference): Outcome<Unit> =
             save(state.value.copy(reminder = preference))

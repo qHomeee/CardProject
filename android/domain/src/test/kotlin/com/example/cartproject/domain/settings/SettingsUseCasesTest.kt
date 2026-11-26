@@ -60,6 +60,15 @@ class SettingsUseCasesTest {
         assertEquals(Outcome.Success(UserSettings()), ObserveSettings(store)().first())
     }
 
+    /** Тема сохраняется независимо от событий напоминаний и жестов. */
+    @Test
+    fun changesOnlyTheme() = runTest {
+        store.save(changed)
+        val expected = changed.copy(theme = ThemePreference.Light)
+        assertEquals(Outcome.Success(Unit), SetThemePreference(store)(expected.theme))
+        assertEquals(Outcome.Success(expected), ObserveSettings(store)().first())
+    }
+
     /** Изменение напоминания оставляет тему и жесты прежними. */
     @Test
     fun changesOnlyReminderAndReturnsSchedulingStatus() = runTest {
@@ -94,6 +103,11 @@ private class SettingsStoreFake : SettingsStore {
     override suspend fun saveGesturesEnabled(enabled: Boolean): Outcome<Unit> {
         val current = (state.value as Outcome.Success).value
         return save(current.copy(gesturesEnabled = enabled))
+    }
+
+    override suspend fun saveTheme(preference: ThemePreference): Outcome<Unit> {
+        val current = (state.value as Outcome.Success).value
+        return save(current.copy(theme = preference))
     }
 
     override suspend fun saveReminder(preference: ReminderPreference): Outcome<Unit> {

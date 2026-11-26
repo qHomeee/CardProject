@@ -17,9 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.cartproject.R
@@ -68,7 +73,14 @@ internal fun StudyScreen(
     }
 
     val scroll = rememberScrollState()
-    LaunchedEffect(active?.index) { scroll.scrollTo(0) }
+    var previousIndex by rememberSaveable { mutableStateOf<Int?>(null) }
+    val loading = state == StudyUiState.Loading
+    LaunchedEffect(loading, active?.index) {
+        if (!loading && active?.index != previousIndex) {
+            scroll.scrollTo(0)
+            previousIndex = active?.index
+        }
+    }
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(Modifier.widthIn(max = 880.dp).fillMaxSize()) {
             SubscreenTopBar(R.string.study_title, onBack)
@@ -119,7 +131,10 @@ private fun CurrentStudyCard(
     onExit: () -> Unit,
 ) {
     val current = active.session.cards[active.index]
-    val wideLayout = LocalConfiguration.current.screenWidthDp >= 600
+    val viewport = LocalWindowInfo.current.containerSize
+    val density = LocalDensity.current
+    val wideLayout = density.fontScale < 1.5f &&
+        with(density) { viewport.width.toDp() >= 600.dp }
     val card: @Composable (Modifier) -> Unit = { modifier ->
         StudyCard(
             question = current.question,
@@ -143,7 +158,8 @@ private fun CurrentStudyCard(
         Row(horizontalArrangement = Arrangement.spacedBy(ZapomniSize.space16)) {
             card(Modifier.weight(1f))
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
+                    .align(if (active.answered) Alignment.Bottom else Alignment.Top),
                 verticalArrangement = Arrangement.spacedBy(ZapomniSize.space12),
             ) {
                 StudyActions(active, gestures, viewModel, onExit)

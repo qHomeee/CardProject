@@ -18,6 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.cartproject.R
 import com.example.cartproject.presentation.theme.ZapomniSize
@@ -69,7 +73,14 @@ internal fun StatusMessage(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 StatusIcon(kind, foreground)
-                Text(title, style = MaterialTheme.typography.labelLarge)
+                Text(
+                    title,
+                    modifier = Modifier.semantics {
+                        heading()
+                        if (kind == StatusKind.Error) liveRegion = LiveRegionMode.Polite
+                    },
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
             if (message != null) {
                 Text(message, style = MaterialTheme.typography.bodyLarge)

@@ -70,6 +70,7 @@ internal fun ZapomniTextField(
             },
             enabled = enabled,
             singleLine = singleLine,
+            maxLines = if (singleLine) 1 else 5,
             textStyle = type.bodyLarge.copy(color = textColor),
             cursorBrush = SolidColor(palette.primary),
             interactionSource = interactionSource,

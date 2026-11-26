@@ -21,11 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.cartproject.R
 import com.example.cartproject.presentation.theme.ZapomniSize
@@ -47,6 +50,13 @@ internal fun ZapomniNavigationBar(
 ) {
     val palette = ZapomniTheme.colors
     val shape = MaterialTheme.shapes.medium
+    val density = LocalDensity.current
+    val largeText = density.fontScale >= 1.5f
+    val labelPadding = if (largeText) 2.dp else ZapomniSize.space4
+    val textMeasurer = rememberTextMeasurer()
+    val labelStyle = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+    val minIconWidth = with(density) { 56.dp.roundToPx() }
+    val horizontalPadding = with(density) { (labelPadding * 2).roundToPx() }
 
     Row(
         modifier = modifier
@@ -56,14 +66,25 @@ internal fun ZapomniNavigationBar(
             .selectableGroup()
             .heightIn(min = 74.dp)
             .padding(ZapomniSize.space4),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = if (largeText) Alignment.Top else Alignment.CenterVertically,
     ) {
         for (tab in ZapomniTab.entries) {
+            val label = stringResource(tab.title)
+            val weight = if (largeText) {
+                val longestWord = label.split(' ').maxOf {
+                    textMeasurer.measure(it, style = labelStyle, softWrap = false).size.width
+                }
+                (maxOf(longestWord, minIconWidth) + horizontalPadding).toFloat()
+            } else {
+                1f
+            }
             NavigationTab(
                 tab = tab,
+                label = label,
+                labelPadding = labelPadding,
                 active = tab == selected,
                 onClick = { onSelect(tab) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(weight),
             )
         }
     }
@@ -72,6 +93,8 @@ internal fun ZapomniNavigationBar(
 @Composable
 private fun NavigationTab(
     tab: ZapomniTab,
+    label: String,
+    labelPadding: Dp,
     active: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -82,7 +105,7 @@ private fun NavigationTab(
         modifier = modifier
             .heightIn(min = ZapomniSize.touchTarget)
             .selectable(selected = active, role = Role.Tab, onClick = onClick)
-            .padding(ZapomniSize.space4),
+            .padding(horizontal = labelPadding, vertical = ZapomniSize.space4),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(ZapomniSize.space4, Alignment.CenterVertically),
     ) {
@@ -102,7 +125,7 @@ private fun NavigationTab(
             )
         }
         Text(
-            text = stringResource(tab.title),
+            text = label,
             color = color,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium,

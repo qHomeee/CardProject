@@ -7,6 +7,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -18,12 +20,15 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.click
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -129,6 +134,10 @@ class DesignComponentsTest {
         }
         assertTrue(tabs.zipWithNext().all { (left, right) -> left.right <= right.left })
         assertTrue(tabs.maxOf { it.top } < tabs.minOf { it.bottom })
+        val textLayout = mutableListOf<TextLayoutResult>()
+        composeRule.onNodeWithText("Настройки", useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(textLayout) }
+        assertEquals(1, textLayout.single().lineCount)
         composeRule.onNodeWithText("Настройки").performClick().assertIsSelected()
     }
 
@@ -144,6 +153,16 @@ class DesignComponentsTest {
 
         composeRule.onNodeWithText("Лиссабон").assertDoesNotExist()
         composeRule.runOnIdle { answer.value = "Лиссабон" }
-        composeRule.onNodeWithText("Лиссабон").assertExists()
+        composeRule.onNodeWithText("Лиссабон")
+            .assert(
+                hasAnyAncestor(
+                    SemanticsMatcher.expectValue(
+                        SemanticsProperties.LiveRegion,
+                        LiveRegionMode.Polite,
+                    ),
+                ),
+            )
+        composeRule.onNodeWithText("Ответ")
+            .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
     }
 }

@@ -120,8 +120,20 @@ private fun EditorForm(
         }
     }
 
+    val primary = if (isDeck) MaterialField.Title else MaterialField.Question
+    val secondary = if (isDeck) MaterialField.Description else MaterialField.Answer
     LaunchedEffect(form.invalidFields) {
-        if (form.invalidFields.isNotEmpty()) listState.scrollToItem(1)
+        val invalidItem = when {
+            primary in form.invalidFields -> 1
+            secondary in form.invalidFields -> 2
+            else -> return@LaunchedEffect
+        }
+        val layout = listState.layoutInfo
+        val visible = layout.visibleItemsInfo.any {
+            it.index == invalidItem && it.offset >= layout.viewportStartOffset &&
+                it.offset + it.size <= layout.viewportEndOffset
+        }
+        if (!visible) listState.scrollToItem(invalidItem)
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -130,10 +142,9 @@ private fun EditorForm(
         verticalArrangement = Arrangement.spacedBy(ZapomniSize.space12),
     ) {
         item(key = "title") { EditorHeading(title) }
-        item(key = "fields") {
-            Column(verticalArrangement = Arrangement.spacedBy(ZapomniSize.space12)) {
-                EditorFields(isDeck, form, editor::updatePrimary, editor::updateSecondary)
-            }
+        item(key = "primary-field") { EditorPrimaryField(isDeck, form, editor::updatePrimary) }
+        item(key = "secondary-field") {
+            EditorSecondaryField(isDeck, form, editor::updateSecondary)
         }
         if (isDeck) {
             item(key = "cards-heading") { EditorHeading(R.string.deck_detail_cards) }
@@ -251,14 +262,12 @@ private fun EditorForm(
 }
 
 @Composable
-private fun EditorFields(
+private fun EditorPrimaryField(
     isDeck: Boolean,
     form: EditorUiState.Form,
     onPrimary: (String) -> Unit,
-    onSecondary: (String) -> Unit,
 ) {
     val primary = if (isDeck) MaterialField.Title else MaterialField.Question
-    val secondary = if (isDeck) MaterialField.Description else MaterialField.Answer
     ZapomniTextField(
         value = form.primaryText,
         onValueChange = onPrimary,
@@ -270,6 +279,15 @@ private fun EditorFields(
         enabled = form.editable,
         singleLine = isDeck,
     )
+}
+
+@Composable
+private fun EditorSecondaryField(
+    isDeck: Boolean,
+    form: EditorUiState.Form,
+    onSecondary: (String) -> Unit,
+) {
+    val secondary = if (isDeck) MaterialField.Description else MaterialField.Answer
     ZapomniTextField(
         value = form.secondaryText,
         onValueChange = onSecondary,

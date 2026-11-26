@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 
 /** Доступность жестов для объяснения причины в интерфейсе. */
-enum class GestureAvailability { Available, Disabled, SensorUnavailable }
+enum class GestureAvailability { Available, GravityOnly, Disabled, SensorUnavailable }
 
 /** Состояние датчика или распознанный жест без Android-типов. */
 sealed interface StudyGestureSignal {

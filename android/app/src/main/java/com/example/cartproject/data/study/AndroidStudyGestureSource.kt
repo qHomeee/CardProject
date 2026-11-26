@@ -13,52 +13,92 @@ import com.example.cartproject.domain.study.StudyGestureDetector
 import com.example.cartproject.domain.study.StudyGestureMode
 import com.example.cartproject.domain.study.StudyGestureSignal
 import com.example.cartproject.domain.study.StudyPoseSample
+import com.example.cartproject.domain.study.StudyScreenDirection
+import com.example.cartproject.domain.study.StudyTurnDetector
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-/** Переводит измерения Android в координаты экрана и освобождает датчик при отмене. */
+/** Переводит измерения Android в жесты и освобождает датчики при отмене подписки. */
 internal class AndroidStudyGestureSource(
     private val sensors: SensorManager,
     private val displays: DisplayManager,
 ) : GestureSource {
     override fun events(mode: () -> StudyGestureMode): Flow<StudyGestureSignal> = callbackFlow {
         val detector = StudyGestureDetector()
+        val turn = StudyTurnDetector()
         val display = displays.getDisplay(Display.DEFAULT_DISPLAY)
         var rotation = Surface.ROTATION_0
-        var hasSample = false
-        val filtered = FloatArray(3)
+        var lastMode: StudyGestureMode? = null
+        var revealSent = false
+        var hasGravity = false
+        val gravity = FloatArray(3)
+        val matrix = FloatArray(9)
         val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
-                filterGravity(
-                    event,
-                    filtered,
-                    smooth = hasSample && event.sensor.type == Sensor.TYPE_ACCELEROMETER,
-                )
-                hasSample = true
                 val currentRotation = display?.rotation ?: Surface.ROTATION_0
-                if (currentRotation != rotation) {
+                val currentMode = mode()
+                if (currentRotation != rotation || currentMode != lastMode) {
                     rotation = currentRotation
+                    lastMode = currentMode
+                    revealSent = false
                     detector.reset()
+                    turn.reset()
                 }
-                val pose = screenPose(filtered, rotation, event.timestamp / 1_000_000)
-                detector.accept(pose, mode())?.let { trySend(it) }
+                val atMillis = event.timestamp / 1_000_000
+                val action = when (event.sensor.type) {
+                    Sensor.TYPE_ROTATION_VECTOR, Sensor.TYPE_GAME_ROTATION_VECTOR -> {
+                        if (currentMode != StudyGestureMode.Reveal) return
+                        SensorManager.getRotationMatrixFromVector(matrix, event.values)
+                        val normal = StudyScreenDirection(matrix[2], matrix[5], matrix[8])
+                        StudyGestureSignal.Action.Reveal.takeIf { turn.accept(normal, atMillis) }
+                    }
+                    else -> {
+                        filterGravity(
+                            event,
+                            gravity,
+                            smooth = hasGravity && event.sensor.type == Sensor.TYPE_ACCELEROMETER,
+                        )
+                        hasGravity = true
+                        detector.accept(screenPose(gravity, rotation, atMillis), currentMode)
+                    }
+                } ?: return
+
+                if (action == StudyGestureSignal.Action.Reveal) {
+                    if (revealSent) return
+                    revealSent = trySend(action).isSuccess
+                } else {
+                    trySend(action)
+                }
             }
 
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
         }
 
-        val registered = sequenceOf(Sensor.TYPE_GRAVITY, Sensor.TYPE_ACCELEROMETER)
-            .mapNotNull(sensors::getDefaultSensor)
-            .any { sensor ->
-                sensors.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME)
-            }
-        val availability =
-            if (registered) GestureAvailability.Available else GestureAvailability.SensorUnavailable
+        val gravityRegistered = register(
+            listener,
+            Sensor.TYPE_GRAVITY,
+            Sensor.TYPE_ACCELEROMETER,
+        )
+        val turnRegistered = gravityRegistered && register(
+            listener,
+            Sensor.TYPE_ROTATION_VECTOR,
+            Sensor.TYPE_GAME_ROTATION_VECTOR,
+        )
+        val availability = when {
+            turnRegistered -> GestureAvailability.Available
+            gravityRegistered -> GestureAvailability.GravityOnly
+            else -> GestureAvailability.SensorUnavailable
+        }
         trySend(StudyGestureSignal.Availability(availability))
-        if (!registered) close()
-        awaitClose { if (registered) sensors.unregisterListener(listener) }
+        if (!gravityRegistered) close()
+        awaitClose { if (gravityRegistered) sensors.unregisterListener(listener) }
     }
+
+    private fun register(listener: SensorEventListener, vararg types: Int): Boolean =
+        types.asSequence().mapNotNull(sensors::getDefaultSensor).any { sensor ->
+            sensors.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME)
+        }
 
     private fun filterGravity(event: SensorEvent, filtered: FloatArray, smooth: Boolean) {
         for (axis in filtered.indices) {

@@ -127,10 +127,15 @@ private fun CurrentStudyCard(
             total = active.session.cards.size,
             modifier = modifier,
             answer = current.answer.takeIf { active.answered },
-            hint = if (gestures == GestureAvailability.Available && !active.answered) {
-                stringResource(R.string.study_gesture_flip)
-            } else {
-                null
+            hint = when {
+                active.answered -> null
+                gestures == GestureAvailability.Available -> stringResource(
+                    R.string.study_gesture_turn,
+                )
+                gestures == GestureAvailability.GravityOnly -> stringResource(
+                    R.string.study_gesture_flip,
+                )
+                else -> null
             },
         )
     }
@@ -158,7 +163,7 @@ private fun StudyActions(
     onExit: () -> Unit,
 ) {
     when (gestures) {
-        GestureAvailability.Available -> if (active.answered) {
+        GestureAvailability.Available, GestureAvailability.GravityOnly -> if (active.answered) {
             Text(
                 text = stringResource(R.string.study_gesture_grade),
                 color = ZapomniTheme.colors.textMuted,

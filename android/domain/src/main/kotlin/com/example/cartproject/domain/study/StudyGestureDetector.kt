@@ -78,11 +78,19 @@ class StudyGestureDetector {
         if (magnitude !in 6f..13f) return Pose.Other
         val across = x / magnitude
         val up = z / magnitude
+        if (mode == StudyGestureMode.Reveal) {
+            return when {
+                up >= 0.80f && abs(across) <= 0.25f -> Pose.Neutral
+                up <= -0.80f -> Pose.Down
+                else -> Pose.Other
+            }
+        }
+        val upward = y / magnitude
+        if (up < -0.25f || (up < 0.40f && upward < 0.40f)) return Pose.Other
         return when {
-            up >= 0.80f && abs(across) <= 0.25f -> Pose.Neutral
-            mode == StudyGestureMode.Reveal && up <= -0.80f -> Pose.Down
-            mode == StudyGestureMode.Grade && up >= 0.40f && across <= -0.50f -> Pose.Right
-            mode == StudyGestureMode.Grade && up >= 0.40f && across >= 0.50f -> Pose.Left
+            abs(across) <= 0.25f -> Pose.Neutral
+            across <= -0.50f -> Pose.Right
+            across >= 0.50f -> Pose.Left
             else -> Pose.Other
         }
     }

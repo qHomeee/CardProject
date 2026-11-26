@@ -14,6 +14,9 @@ interface SettingsStore {
 
     /** Меняет только предпочтение жестов, сохраняя остальные поля. */
     suspend fun saveGesturesEnabled(enabled: Boolean): Outcome<Unit>
+
+    /** Меняет только напоминание, сохраняя жесты и тему. */
+    suspend fun saveReminder(preference: ReminderPreference): Outcome<Unit>
 }
 
 /** Результат согласования напоминаний с разрешением Android. */
@@ -30,6 +33,9 @@ fun interface ReminderScheduler {
 
 /** Настройки сохранены. Результат согласования напоминания передаётся отдельно. */
 data class SettingsUpdate(val settings: UserSettings, val reminder: Outcome<ReminderStatus>)
+
+/** Напоминание сохранено, даже если его планирование не удалось. */
+data class ReminderUpdate(val preference: ReminderPreference, val status: Outcome<ReminderStatus>)
 
 /** Наблюдает изменения настроек. */
 class ObserveSettings(private val store: SettingsStore) {
@@ -49,4 +55,10 @@ class UpdateSettings(private val store: SettingsStore, private val reminders: Re
     /** Ошибка планирования оставляет новые настройки сохранёнными. */
     suspend operator fun invoke(settings: UserSettings): Outcome<SettingsUpdate> =
         store.save(settings).map { SettingsUpdate(settings, reminders.reconcileLatest()) }
+
+    /** Записывает напоминание независимо от остальных настроек. */
+    suspend fun setReminder(preference: ReminderPreference): Outcome<ReminderUpdate> =
+        store.saveReminder(preference).map {
+            ReminderUpdate(preference, reminders.reconcileLatest())
+        }
 }

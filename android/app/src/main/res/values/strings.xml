@@ -125,4 +125,7 @@
     <string name="gesture_settings_label">Управление жестами</string>
     <string name="gesture_settings_read_error">Не удалось прочитать настройку жестов</string>
     <string name="gesture_settings_write_error">Не удалось сохранить настройку жестов</string>
+    <string name="reminder_channel">Повторение карточек</string>
+    <string name="reminder_notification_title">Пора повторить карточки</string>
+    <string name="reminder_notification_body">У тебя есть карточки, готовые к повторению.</string>
 </resources>

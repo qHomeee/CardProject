@@ -3,8 +3,11 @@ package com.example.cartproject.di
 import android.hardware.SensorManager
 import android.hardware.display.DisplayManager
 import android.net.ConnectivityManager
+import com.example.cartproject.data.settings.StudyReminderController
 import com.example.cartproject.data.study.AndroidStudyGestureSource
 import com.example.cartproject.domain.decks.ObserveMyDecks
+import com.example.cartproject.domain.settings.ReminderScheduler
+import com.example.cartproject.domain.settings.UpdateSettings
 import com.example.cartproject.domain.study.GestureSource
 import com.example.cartproject.domain.study.ObserveStudyGestures
 import com.example.cartproject.presentation.catalog.CatalogViewModel
@@ -15,12 +18,15 @@ import com.example.cartproject.presentation.study.GestureSettingsViewModel
 import com.example.cartproject.presentation.study.StudyViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal val appModule = module {
     includes(catalogModule, storageModule)
 
     factory { ObserveMyDecks(get()) }
+    single { StudyReminderController(androidContext(), get(), get()) } bind ReminderScheduler::class
+    factory { UpdateSettings(get(), get()) }
     single<GestureSource> {
         AndroidStudyGestureSource(
             androidContext().getSystemService(SensorManager::class.java),

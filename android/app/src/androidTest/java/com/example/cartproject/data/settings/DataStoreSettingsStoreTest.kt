@@ -6,10 +6,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.example.cartproject.domain.AppError
 import com.example.cartproject.domain.Outcome
 import com.example.cartproject.domain.settings.ReminderPreference
-import com.example.cartproject.domain.settings.SettingsStore
 import com.example.cartproject.domain.settings.ThemePreference
 import com.example.cartproject.domain.settings.UserSettings
 import java.io.File
+import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
@@ -53,6 +53,41 @@ class DataStoreSettingsStoreTest {
         Unit
     }
 
+    /** Изменение напоминания сохраняет другие настройки и дату последней отправки. */
+    @Test
+    fun claimsOneReminderPerDayAndRejectsOutdatedPreferences() = runBlocking {
+        val file = settingsFile()
+        val day = LocalDate.of(2026, 11, 26)
+        val time = LocalTime.of(20, 0)
+        val changed = time.plusHours(1)
+        try {
+            withStore(file) { store ->
+                assertEquals(
+                    Outcome.Success(Unit),
+                    store.save(UserSettings(ThemePreference.Dark, true)),
+                )
+                assertEquals(Outcome.Success(false), store.claimReminder(day, time))
+                assertEquals(Outcome.Success(Unit), store.saveReminder(ReminderPreference.On(time)))
+                assertEquals(Outcome.Success(true), store.claimReminder(day, time))
+                assertEquals(
+                    Outcome.Success(Unit),
+                    store.saveReminder(ReminderPreference.On(changed)),
+                )
+            }
+            withStore(file) { store ->
+                val expected =
+                    UserSettings(ThemePreference.Dark, true, ReminderPreference.On(changed))
+                assertEquals(Outcome.Success(expected), store.observe().first())
+                assertEquals(Outcome.Success(false), store.claimReminder(day, changed))
+                assertEquals(Outcome.Success(false), store.claimReminder(day.plusDays(1), time))
+                assertEquals(Outcome.Success(true), store.claimReminder(day.plusDays(1), changed))
+            }
+        } finally {
+            file.delete()
+        }
+        Unit
+    }
+
     /** Повреждённый файл остаётся доступен для восстановления, клиент получает ошибку. */
     @Test
     fun corruptPreferencesReportReadFailure() = runBlocking {
@@ -88,7 +123,7 @@ class DataStoreSettingsStoreTest {
     private fun settingsFile(): File =
         File(context.cacheDir, "settings-test-${UUID.randomUUID()}.preferences_pb")
 
-    private suspend fun withStore(file: File, action: suspend (SettingsStore) -> Unit) {
+    private suspend fun withStore(file: File, action: suspend (DataStoreSettingsStore) -> Unit) {
         val job = SupervisorJob()
         val scope = CoroutineScope(Dispatchers.IO + job)
         try {

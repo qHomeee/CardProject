@@ -14,6 +14,7 @@ import com.example.cartproject.domain.decks.SaveOwnCard
 import com.example.cartproject.domain.decks.SaveOwnDeck
 import com.example.cartproject.domain.settings.ObserveSettings
 import com.example.cartproject.domain.settings.SetStudyGestures
+import com.example.cartproject.domain.settings.SettingsStore
 import com.example.cartproject.domain.study.GradeCard
 import com.example.cartproject.domain.study.ReadStatistics
 import com.example.cartproject.domain.study.ReviewStore
@@ -28,7 +29,7 @@ internal val storageModule = module {
     single { openZapomniDatabase(androidContext()) } onClose { it?.close() }
     single<LocalDeckStore> { RoomLocalDeckStore(get()) } bind LocalDeckList::class
     single<ReviewStore> { RoomReviewStore(get()) }
-    single { openSettingsStore(androidContext()) }
+    single { openSettingsStore(androidContext()) } bind SettingsStore::class
 
     factory { ReadDeck(get(), get()) }
     factory { DownloadDeck(get(), get()) }

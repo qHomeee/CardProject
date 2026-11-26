@@ -38,6 +38,10 @@ internal interface ReviewDao {
     @Query(SELECT_SCHEDULES + " WHERE cards.deck_id = :deckId AND cards.id = :cardId")
     suspend fun scheduledCard(deckId: Long, cardId: Long): ScheduledCardRow?
 
+    /** Проверяет наличие хотя бы одной карточки со сроком повторения. */
+    @Query("SELECT EXISTS(SELECT 1 FROM review_schedules WHERE due_at <= :now)")
+    suspend fun hasDueCards(now: Long): Boolean
+
     /** Записывает начальное расписание новой карточки. */
     @Insert
     suspend fun insertSchedule(entity: ReviewScheduleEntity)

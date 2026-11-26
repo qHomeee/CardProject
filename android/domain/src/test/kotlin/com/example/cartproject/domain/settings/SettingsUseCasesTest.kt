@@ -60,6 +60,20 @@ class SettingsUseCasesTest {
         assertEquals(Outcome.Success(UserSettings()), ObserveSettings(store)().first())
     }
 
+    /** Изменение напоминания оставляет тему и жесты прежними. */
+    @Test
+    fun changesOnlyReminderAndReturnsSchedulingStatus() = runTest {
+        store.save(changed)
+        val reminder = ReminderPreference.Off((changed.reminder as ReminderPreference.On).time)
+        val status = Outcome.Success(ReminderStatus.Disabled)
+        val update = UpdateSettings(store) { status }
+        assertEquals(
+            Outcome.Success(ReminderUpdate(reminder, status)),
+            update.setReminder(reminder),
+        )
+        assertEquals(Outcome.Success(changed.copy(reminder = reminder)), store.observe().first())
+    }
+
     /** Ошибка планирования не отменяет уже сохранённый выбор. */
     @Test
     fun reportsSchedulingFailureSeparatelyFromSavedSettings() = runTest {
@@ -80,6 +94,11 @@ private class SettingsStoreFake : SettingsStore {
     override suspend fun saveGesturesEnabled(enabled: Boolean): Outcome<Unit> {
         val current = (state.value as Outcome.Success).value
         return save(current.copy(gesturesEnabled = enabled))
+    }
+
+    override suspend fun saveReminder(preference: ReminderPreference): Outcome<Unit> {
+        val current = (state.value as Outcome.Success).value
+        return save(current.copy(reminder = preference))
     }
 
     override suspend fun save(settings: UserSettings): Outcome<Unit> {

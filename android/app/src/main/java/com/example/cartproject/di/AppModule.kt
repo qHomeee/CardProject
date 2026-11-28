@@ -16,6 +16,7 @@ import com.example.cartproject.presentation.decks.MyDecksViewModel
 import com.example.cartproject.presentation.editor.MaterialEditorViewModel
 import com.example.cartproject.presentation.settings.ReminderSettingsViewModel
 import com.example.cartproject.presentation.settings.SettingsViewModel
+import com.example.cartproject.presentation.statistics.StatisticsViewModel
 import com.example.cartproject.presentation.study.StudyViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -42,6 +43,7 @@ internal val appModule = module {
     }
     viewModel { params -> StudyViewModel(params.get(), get(), get(), get(), get()) }
     viewModel { MyDecksViewModel(get()) }
+    viewModel { StatisticsViewModel(get()) }
     viewModel { params -> DeckDetailViewModel(params.get(), get(), get(), get()) }
     viewModel { params -> MaterialEditorViewModel(params.get(), get(), get(), get(), get()) }
     viewModel {

@@ -112,7 +112,15 @@
     <string name="study_exit_help">Сохранённые оценки останутся в истории. Текущая карточка без оценки не учитывается.</string>
     <string name="study_exit_confirm">Выйти</string>
     <string name="study_complete">Занятие завершено</string>
-    <string name="study_percent">%1$.1f%% верных ответов</string>
+    <string name="study_percent">%1$s%% оценок «Вспомнил»</string>
+    <string name="study_review_total">Всего оценок: %1$d</string>
+    <string name="statistics_action">Статистика</string>
+    <string name="statistics_title">История занятий</string>
+    <string name="statistics_loading">Загружаем историю занятий</string>
+    <string name="statistics_error">Не удалось прочитать историю занятий</string>
+    <string name="statistics_empty">Нет данных</string>
+    <string name="statistics_empty_help">Завершите повторение карточки, чтобы увидеть первую оценку.</string>
+    <string name="statistics_summary">Результаты всех занятий</string>
     <string name="study_remembered_result">Вспомнил %1$d из %2$d</string>
     <string name="study_review_result">Нужно повторить %1$d из %2$d</string>
     <string name="study_gestures_disabled">Жесты выключены</string>

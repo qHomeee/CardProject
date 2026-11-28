@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cartproject.R
 import com.example.cartproject.domain.study.GestureAvailability
 import com.example.cartproject.domain.study.ReviewGrade
-import com.example.cartproject.domain.study.StudySummary
+import com.example.cartproject.presentation.components.ReviewSummary
 import com.example.cartproject.presentation.components.StatusAction
 import com.example.cartproject.presentation.components.StatusKind
 import com.example.cartproject.presentation.components.StatusMessage
@@ -113,7 +113,7 @@ internal fun StudyScreen(
                         StudyButton(R.string.study_back_to_deck, onClose)
                     }
                     is StudyUiState.Complete -> {
-                        StudyResult(state.summary)
+                        ReviewSummary(state.summary, stringResource(R.string.study_complete))
                         StudyButton(R.string.study_back_to_deck, onClose)
                     }
                     is StudyUiState.Active -> CurrentStudyCard(state, gestures, viewModel, onBack)
@@ -230,24 +230,6 @@ private fun StudyActions(
         modifier = Modifier.fillMaxWidth(),
         secondary = true,
         enabled = !active.saving,
-    )
-}
-
-@Composable
-private fun StudyResult(summary: StudySummary) {
-    val percent = summary.rememberedPercent ?: 0.0
-    StatusMessage(
-        kind = StatusKind.Success,
-        title = stringResource(R.string.study_complete),
-        message = stringResource(R.string.study_percent, percent),
-    )
-    Text(
-        stringResource(R.string.study_remembered_result, summary.remembered, summary.total),
-        style = MaterialTheme.typography.bodyLarge,
-    )
-    Text(
-        stringResource(R.string.study_review_result, summary.needsReview, summary.total),
-        style = MaterialTheme.typography.bodyLarge,
     )
 }
 

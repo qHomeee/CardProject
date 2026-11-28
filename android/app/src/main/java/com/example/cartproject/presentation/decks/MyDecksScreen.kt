@@ -35,6 +35,7 @@ internal fun MyDecksScreen(
     onRetry: () -> Unit,
     onOpenDeck: (LocalDeckId) -> Unit,
     onCreateDeck: () -> Unit,
+    onOpenStatistics: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
@@ -54,6 +55,14 @@ internal fun MyDecksScreen(
                 ZapomniButton(
                     label = stringResource(R.string.create_deck),
                     onClick = onCreateDeck,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            item {
+                ZapomniButton(
+                    label = stringResource(R.string.statistics_action),
+                    onClick = onOpenStatistics,
+                    secondary = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

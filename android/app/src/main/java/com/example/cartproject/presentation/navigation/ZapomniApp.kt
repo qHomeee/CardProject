@@ -47,6 +47,8 @@ import com.example.cartproject.presentation.decks.DeckSource
 import com.example.cartproject.presentation.decks.MyDecksScreen
 import com.example.cartproject.presentation.decks.MyDecksViewModel
 import com.example.cartproject.presentation.settings.SettingsScreen
+import com.example.cartproject.presentation.statistics.StatisticsScreen
+import com.example.cartproject.presentation.statistics.StatisticsViewModel
 import com.example.cartproject.presentation.theme.ZapomniSize
 import com.example.cartproject.presentation.theme.ZapomniTheme
 import java.util.UUID
@@ -62,6 +64,9 @@ private data object MyDecksRoute
 
 @Serializable
 private data object SettingsRoute
+
+@Serializable
+private data object StatisticsRoute
 
 @Serializable
 private data class CatalogDeckRoute(val id: String)
@@ -151,9 +156,19 @@ internal fun ZapomniApp(catalog: CatalogViewModel, myDecks: MyDecksViewModel) {
                     onCreateDeck = {
                         navController.navigate(NewDeckRoute) { launchSingleTop = true }
                     },
+                    onOpenStatistics = {
+                        navController.navigate(StatisticsRoute) { launchSingleTop = true }
+                    },
                 )
             }
             composable<SettingsRoute> { SettingsScreen() }
+            composable<StatisticsRoute> { entry ->
+                val viewModel = koinViewModel<StatisticsViewModel>()
+                val state by viewModel.uiState.collectAsStateWithLifecycle()
+                StatisticsScreen(state, onRetry = viewModel::load) {
+                    if (navController.currentBackStackEntry == entry) navController.popBackStack()
+                }
+            }
             composable<CatalogDeckRoute> { deckEntry ->
                 val id = CatalogDeckId(UUID.fromString(deckEntry.toRoute<CatalogDeckRoute>().id))
                 DeckDetailDestination(

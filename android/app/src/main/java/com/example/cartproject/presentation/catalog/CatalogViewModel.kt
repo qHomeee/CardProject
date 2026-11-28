@@ -16,13 +16,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/** Текущий текст поиска и результат последнего запроса. */
 internal data class CatalogUiState(val query: String, val result: CatalogResult)
 
+/** Состояния загрузки и поиска в общем каталоге. */
 internal sealed interface CatalogResult {
+    /** Результат ожидается после ввода текста или обращения к серверу. */
     data object Loading : CatalogResult
+
+    /** Нет подключения к интернету. Доступны локальные наборы. */
     data object Offline : CatalogResult
+
+    /** Найденные наборы. Пустой список означает отсутствие совпадений. */
     data class Content(val decks: List<CatalogDeckSummary>) : CatalogResult
+
+    /** Запрос отклонён проверкой длины или допустимых символов. */
     data class InvalidQuery(val issue: MaterialIssue?) : CatalogResult
+
+    /** Запрос завершился ошибкой каталога при доступном подключении. */
     data class Error(val reason: AppError) : CatalogResult
 }
 
@@ -42,12 +53,14 @@ internal class CatalogViewModel(
         retry()
     }
 
+    /** Сохраняет текст и выполняет поиск после паузы во вводе. */
     fun updateQuery(query: String) {
         if (query == state.value.query) return
         savedState[QUERY_KEY] = query
         load(query, waitForTyping = true)
     }
 
+    /** Сразу повторяет запрос с текущим текстом поиска. */
     fun retry() {
         load(state.value.query, waitForTyping = false)
     }

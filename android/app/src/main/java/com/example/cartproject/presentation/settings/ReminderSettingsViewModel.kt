@@ -14,8 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+/** Операция настройки напоминания, которую нужно повторить. */
 internal enum class ReminderSettingsError { Read, Write, Schedule }
 
+/** Сохранённое предпочтение и состояние системного расписания. */
 internal data class ReminderSettingsState(
     val preference: ReminderPreference? = null,
     val status: ReminderStatus? = null,
@@ -69,6 +71,7 @@ internal class ReminderSettingsViewModel(
         if (pending == null) refresh() else save(pending)
     }
 
+    /** Меняет включение напоминания, сохраняя выбранное время. */
     fun changeEnabled(enabled: Boolean) {
         val current = state.value
         if (current.preference == null || current.enabled == enabled) return
@@ -83,6 +86,7 @@ internal class ReminderSettingsViewModel(
         )
     }
 
+    /** Сохраняет местное время и обновляет расписание для включённого напоминания. */
     fun changeTime(time: LocalTime) {
         val current = state.value
         if (current.preference == null) return

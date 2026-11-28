@@ -33,11 +33,19 @@ import kotlinx.coroutines.launch
 
 /** Состояния занятия с неизменной очередью текущего запуска. */
 internal sealed interface StudyUiState {
+    /** Очередь карточек ещё формируется. */
     data object Loading : StudyUiState
+
+    /** Локальную очередь не удалось загрузить. */
     data class ReadError(val reason: AppError) : StudyUiState
+
+    /** В очереди нет карточек. Ближайший срок указывается при его наличии. */
     data class Empty(val dueAt: Instant?) : StudyUiState
+
+    /** Текущая очередь завершена, итог содержит оценки этого занятия. */
     data class Complete(val summary: StudySummary) : StudyUiState
 
+    /** Текущая карточка, открытый ответ и состояние записи оценки. */
     data class Active(
         val session: StudySession,
         val index: Int = 0,

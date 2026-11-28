@@ -53,8 +53,10 @@ internal class SettingsViewModel(
         }
     }
 
+    /** Записывает настройку управления жестами. */
     fun changeGestures(enabled: Boolean) = save { setGestures(enabled) }
 
+    /** Сохраняет выбранную тему и даёт экрану применить её. */
     fun changeTheme(preference: ThemePreference) = save { setTheme(preference) }
 
     /** Повторяет запись последнего выбранного значения. */

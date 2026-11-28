@@ -18,8 +18,10 @@ data class StudyPoseSample(
 
 /** Выдаёт один жест после устойчивого положения и возврата к нейтрали. */
 class StudyGestureDetector {
+    /** Метки устойчивых положений телефона по вектору гравитации. */
     private enum class Pose { Neutral, Down, Right, Left, Other }
 
+    /** Этап между нейтральным положением, отклонением и возвратом. */
     private enum class Step { NeedNeutral, Ready, TurnedDown }
 
     private var step = Step.NeedNeutral

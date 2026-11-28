@@ -22,12 +22,15 @@ import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
+/** Маршрут создания набора. */
 @Serializable
 internal data object NewDeckRoute
 
+/** Маршрут редактирования собственного набора по его ID. */
 @Serializable
 internal data class EditDeckRoute(val deckId: Long)
 
+/** Маршрут карточки. Пустой ID карточки открывает создание. */
 @Serializable
 internal data class CardEditorRoute(val deckId: Long, val cardId: Long = 0L)
 

@@ -25,22 +25,37 @@ import kotlinx.coroutines.launch
 
 /** Материал, для которого открыта форма. Пустой ID означает создание записи. */
 internal sealed interface EditorTarget {
+    /** Создание набора или изменение набора по его ID. */
     data class Deck(val id: LocalDeckId?) : EditorTarget
+
+    /** Создание карточки в наборе или изменение карточки по её ID. */
     data class Card(val deckId: LocalDeckId, val id: LocalCardId?) : EditorTarget
 }
 
+/** Действие записи, которое сейчас выполняется или завершилось ошибкой. */
 internal enum class EditorOperation { Save, Delete }
 
+/** Успешное завершение записи для перехода между экранами. */
 internal sealed interface EditorCompletion {
+    /** Сохранённый набор с локальным идентификатором. */
     data class DeckSaved(val id: LocalDeckId) : EditorCompletion
+
+    /** Сохранённая карточка возвращает пользователя к набору. */
     data object CardSaved : EditorCompletion
+
+    /** Выбранный набор или карточка удалены. */
     data object Deleted : EditorCompletion
 }
 
+/** Загрузка исходных данных и состояние редактирования. */
 internal sealed interface EditorUiState {
+    /** Исходный материал ещё читается из базы. */
     data object Loading : EditorUiState
+
+    /** Форму нельзя заполнить из-за ошибки чтения. */
     data class ReadError(val error: AppError) : EditorUiState
 
+    /** Черновик полей, список карточек и результаты проверки ввода. */
     data class Form(
         val primaryText: String = "",
         val secondaryText: String = "",

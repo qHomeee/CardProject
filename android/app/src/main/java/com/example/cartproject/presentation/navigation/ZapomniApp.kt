@@ -56,21 +56,27 @@ import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
+/** Вкладка общего каталога. */
 @Serializable
 private data object CatalogRoute
 
+/** Вкладка собственных и скачанных наборов. */
 @Serializable
 private data object MyDecksRoute
 
+/** Вкладка пользовательских настроек. */
 @Serializable
 private data object SettingsRoute
 
+/** История оценок, открытая из «Моих наборов». */
 @Serializable
 private data object StatisticsRoute
 
+/** Просмотр серверного набора по его публичному ID. */
 @Serializable
 private data class CatalogDeckRoute(val id: String)
 
+/** Просмотр собственного или скачанного набора по локальному ID. */
 @Serializable
 internal data class LocalDeckRoute(val id: Long)
 

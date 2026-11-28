@@ -18,11 +18,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/** Источник содержимого, выбранный при открытии экрана. */
 internal sealed interface DeckSource {
+    /** Серверный набор с идентификатором общего каталога. */
     data class Catalog(val id: CatalogDeckId) : DeckSource
+
+    /** Собственный или скачанный набор из локальной базы. */
     data class Local(val id: LocalDeckId) : DeckSource
 }
 
+/** Содержимое набора в форме, которую показывает экран. */
 internal data class DeckDetails(
     val title: String,
     val description: String,
@@ -30,17 +35,31 @@ internal data class DeckDetails(
     val cards: List<DeckDetailCard>,
 )
 
+/** Вопрос и ответ со стабильным ключом для списка. */
 internal data class DeckDetailCard(val key: String, val question: String, val answer: String)
 
+/** Состояния загрузки и удаления локальной копии. */
 internal sealed interface DeckDetailAction {
+    /** Операция записи сейчас отсутствует. */
     data object Idle : DeckDetailAction
+
+    /** Сетевая загрузка и запись снимка ещё выполняются. */
     data object Downloading : DeckDetailAction
+
+    /** Снимок сохранён и доступен по локальному идентификатору. */
     data class Downloaded(val id: LocalDeckId) : DeckDetailAction
+
+    /** Локальный снимок и связанные записи удаляются. */
     data object Removing : DeckDetailAction
+
+    /** Локальная копия удалена, экран может закрыться. */
     data object Removed : DeckDetailAction
+
+    /** Операция записи завершилась ошибкой и допускает повтор. */
     data class Failed(val reason: AppError) : DeckDetailAction
 }
 
+/** Результат чтения, ссылка на снимок и состояние записи. */
 internal data class DeckDetailUiState(
     val result: Outcome<DeckDetails>? = null,
     val savedCopy: LocalDeckId? = null,
@@ -62,6 +81,7 @@ internal class DeckDetailViewModel(
         retryRead()
     }
 
+    /** Повторяет чтение при отсутствии загруженных данных. */
     fun retryRead() {
         if (readJob?.isActive == true || state.value.result is Outcome.Success) return
         state.update { it.copy(result = null) }
@@ -92,6 +112,7 @@ internal class DeckDetailViewModel(
         }
     }
 
+    /** Скачивает выбранный набор и сохраняет полный снимок в локальной базе. */
     fun download() {
         val id = (source as? DeckSource.Catalog)?.id ?: return
         val current = state.value
@@ -118,6 +139,7 @@ internal class DeckDetailViewModel(
         }
     }
 
+    /** Удаляет локальный снимок и относящуюся к нему историю. */
     fun removeSavedCopy() {
         val id = (source as? DeckSource.Local)?.id ?: return
         val current = state.value

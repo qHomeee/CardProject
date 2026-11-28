@@ -4,8 +4,10 @@ import kotlin.math.sqrt
 
 /** Направление наружу от экрана в общей для измерений системе координат. */
 data class StudyScreenDirection(val x: Float, val y: Float, val z: Float) {
+    /** Вычисляет скалярное произведение двух направлений экрана. */
     internal fun dot(other: StudyScreenDirection): Float = x * other.x + y * other.y + z * other.z
 
+    /** Сравнивает горизонтальные проекции, если обе выражены достаточно. */
     internal fun horizontalAlignment(other: StudyScreenDirection): Float? {
         val horizontal = sqrt(x * x + y * y)
         val otherHorizontal = sqrt(other.x * other.x + other.y * other.y)
@@ -16,8 +18,10 @@ data class StudyScreenDirection(val x: Float, val y: Float, val z: Float) {
 
 /** Узнаёт разворот экрана относительно того положения, из которого началось движение. */
 class StudyTurnDetector {
+    /** Определяет, сравнивается ли разворот в пространстве или по горизонтали. */
     private enum class TurnPlane { Space, Horizontal }
 
+    /** Устойчивое направление и начало его наблюдения. */
     private data class SteadyDirection(val direction: StudyScreenDirection, val since: Long)
 
     private var lastSample: Long? = null
